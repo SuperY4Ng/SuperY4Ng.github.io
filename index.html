@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>SuperY4Ng&#39;s Studio</title>
+    <title>SuperY4Ng&#39;s Blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -210,7 +210,7 @@
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
     
-    <a class="home-link" href=/>SuperY4Ng's Studio.</a>
+    <a class="home-link" href=/>SuperY4Ng's Blog</a>
 </header>
     <div class="wrapper">
         <div class="site-intro" style="
@@ -236,7 +236,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            SuperY4Ng's Studio.
+            SuperY4Ng's Blog
             <!-- 文章页  -->
             
         </h1>
@@ -352,6 +352,124 @@ height:50vh;
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
             <main class="main index-page">
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2018/09/16/渗透测试初步学习之漏洞发现/" >
+            
+                <span>[Untitled Post]</span>
+        </a>
+        <div class="abstract-content">
+            渗透测试初步学习之漏洞发现一、目录扫描​    目录扫描的目的是为了探测目标的目录情况，从而分析目标的CMS情况、敏感信息泄露情况 以及 一个大体的站点地图。
+​    这里推荐用御剑前辈的后台扫描器。
+二、蜘蛛爬行​    蜘蛛爬行和目录扫描的目的差不多，都是为了帮助用户建立一个大概的站点地图，但是两者采用的方法却不同，目录扫描是根据字典进行枚举，而蜘蛛爬行则是从站点的链接中获取站点的目录情况。
+  蜘蛛爬行相较于目录扫描的最大优点在于，能爬出苛刻的目录，比如web后台的目录是bnbndmw/login.php，而bnbndmw是比较苛刻的字符很难有字典包含这个字符，而这个链接又存在于...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/16</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2018/09/16/渗透测试初步学习之信息收集/" >
+            
+                <span>[Untitled Post]</span>
+        </a>
+        <div class="abstract-content">
+            渗透测试初步学习之信息收集​    信息收集的主要目的是为了制定下一步的攻击方案。
+​    那信息收集要收集哪些信息？
+
+是否存在CDN
+（1）简介
+​    CDN的全称是Content Delivery Network，即内容分发网络。其基本思路是尽可能避开互联网上有可能影响数据传输速度和稳定性的瓶颈和环节，使内容传输的更快、更稳定。通过在网络各处放置节点服务器所构成的在现有的互联网基础之上的一层智能虚拟网络，CDN系统能够实时地根据网络流量和各节点的连接、负载状况以及到用户的距离和响应时间等综合信息将用户的请求重新导向离用户最近的服务节点上。其目的是使用户可就近取得所需内容，解决...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/16</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2018/09/16/I春秋CTF训练营web题解（一）/" >
+            
+                <span>[Untitled Post]</span>
+        </a>
+        <div class="abstract-content">
+            I春秋CTF训练营web题解（一）（1）include==hint：没错！就是文件包含漏洞.==
+点开链接，发现
+
+通过源码可知可以提交一个path的变量，通过ctrl+f搜索allow_url_include，发现是打开状态：
+
+所以打开火狐浏览器，用hackbar工具输入：
+
+发现存在疑似含有flag的文件
+
+接着使用php://filter协议查看曝露出来的文件的内容，因为PHP文件是在不能直接显示的，所以使用了base64编码显示
+
+然后解码就可以得到flag了
+
+（2）SQL==hint：出题人就告诉你这个是个注入，有种别走！==
+创建链接点进去，然后查看源码
+
+很明显知道用s...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/16</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2018/09/16/web开发快速入门(一)/" >
+            
+                <span>[Untitled Post]</span>
+        </a>
+        <div class="abstract-content">
+            WEB开发快速入门（一）1、HTTP状态码对网站管理工作者来说有个词不陌生，HTTP状态码，它是用以表示网页服务器HTTP响应状态的3位数字代码。状态码的第一个数字代表了响应的五种状态之一。
+　　==1XX系列==：指定客户端应相应的某些动作，代表请求已被接受，需要继续处理。由于 HTTP/1.0 协议中没有定义任何 1xx 状态码，所以除非在某些试验条件下，服务器禁止向此类客户端发送 1xx 响应。
+　　==2XX系列==：代表请求已成功被服务器接收、理解、并接受。这系列中最常见的有200、201状态码。　　200状态码：表示请求已成功，请求所希望的响应头或数据体将随此响应返回　　20...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/16</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
     
     
     
@@ -607,9 +725,49 @@ More...
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 1
+        Total : 5
         </div>
         <!-- search  -->
         
@@ -620,12 +778,59 @@ More...
     
     
     
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href= "/2018/09/16/渗透测试初步学习之信息收集/" >[Untitled Post]</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href= "/2018/09/16/渗透测试初步学习之漏洞发现/" >[Untitled Post]</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> Invalid date </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2018/09/16/web开发快速入门(一)/" >[Untitled Post]</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
     <div class="archive-year"> Invalid date </div>
     <ul class="year-list">
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2018/09/15/hello-world/" >Hello World</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> Invalid date </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2018/09/16/I春秋CTF训练营web题解（一）/" >[Untitled Post]</a>
         </li>
     
     </div>
