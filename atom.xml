@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-10-08T09:18:49.972Z</updated>
+  <updated>2018-09-16T02:50:23.884Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,29 +15,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title></title>
-    <link href="http://yoursite.com/2018/10/08/bwapp(1)/"/>
-    <id>http://yoursite.com/2018/10/08/bwapp(1)/</id>
-    <published>2018-10-08T08:52:46.106Z</published>
-    <updated>2018-10-08T09:18:49.972Z</updated>
-    
-    <content type="html"><![CDATA[<hr><p>titles:bwapp(1)</p><h2 id="tags-bwapp"><a href="#tags-bwapp" class="headerlink" title="tags:bwapp"></a>tags:bwapp</h2><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Ps:https://blog.csdn.net/Super_Yiang/article/details/82970499</span></span><br></pre></td></tr></table></figure><h1 id="HTML-Injection-Reflected-GET"><a href="#HTML-Injection-Reflected-GET" class="headerlink" title="HTML Injection - Reflected (GET)"></a>HTML Injection - Reflected (GET)</h1><h5 id="low"><a href="#low" class="headerlink" title="low"></a>low</h5><p><img src="https://i.loli.net/2018/10/08/5bbb0b9d25e70.png" alt=""></p><p>题目很明显注入，而且提交方式为get，尝试着在输入框分别输入1和1</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.109.130/bWAPP/htmli_get.php?firstname=1&amp;lastname=1&amp;form=submit</span><br></pre></td></tr></table></figure><p>下方也会显示</p><p><img src="https://i.loli.net/2018/10/08/5bbb0ef34b1d4.png" alt=""></p><p>那么尝试注入代码</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">marquee</span>&gt;</span><span class="tag">&lt;<span class="name">h2</span>&gt;</span>You just got hacked!!<span class="tag">&lt;/<span class="name">h2</span>&gt;</span><span class="tag">&lt;/<span class="name">marquee</span>&gt;</span></span><br></pre></td></tr></table></figure><p>成功注入</p><p><img src="https://i.loli.net/2018/10/08/5bbb0faa292c8.png" alt=""></p><h5 id="medium"><a href="#medium" class="headerlink" title="medium"></a>medium</h5><p><img src="https://i.loli.net/2018/10/08/5bbb0b9d25e70.png" alt=""></p><p>尝试直接注入</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">marquee</span>&gt;</span><span class="tag">&lt;<span class="name">h2</span>&gt;</span>You just got hacked!!<span class="tag">&lt;/<span class="name">h2</span>&gt;</span><span class="tag">&lt;/<span class="name">marquee</span>&gt;</span></span><br></pre></td></tr></table></figure><p>注入失败</p><p><img src="https://i.loli.net/2018/10/08/5bbb104a79526.png" alt=""></p><p>查看源码发现&lt;和&gt;被转义成&amp;lt；和&amp;gt；</p><p><img src="https://i.loli.net/2018/10/08/5bbb1556ad29d.png" alt=""></p><p>尝试将&lt;和&gt;进行urlencode成%3C和%3E进行注入</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%3Cmarquee%3E%3Ch2%3EYou just got hacked!!%3C/h2%3E%3C/marquee%3E</span><br></pre></td></tr></table></figure><p>成功绕过并注入</p><h5 id="high"><a href="#high" class="headerlink" title="high"></a>high</h5><p>高级别的直接放源码审计吧</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">xss_check_3</span><span class="params">($data, $encoding = <span class="string">"UTF-8"</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// htmlspecialchars - converts special characters to HTML entities    </span></span><br><span class="line">    <span class="comment">// '&amp;' (ampersand) becomes '&amp;amp;' </span></span><br><span class="line">    <span class="comment">// '"' (double quote) becomes '&amp;quot;' when ENT_NOQUOTES is not set</span></span><br><span class="line">    <span class="comment">// "'" (single quote) becomes '&amp;#039;' (or &amp;apos;) only when ENT_QUOTES is set</span></span><br><span class="line">    <span class="comment">// '&lt;' (less than) becomes '&amp;lt;'</span></span><br><span class="line">    <span class="comment">// '&gt;' (greater than) becomes '&amp;gt;'  </span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> htmlspecialchars($data, ENT_QUOTES, $encoding);</span><br><span class="line">       </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>很明显源码中用了htmlspecialchars()这个函数，码一波：</p><p><strong>htmlspecialchars() 函数把预定义的字符转换为 HTML 实体。</strong> </p><p><strong>预定义的字符是：</strong> </p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&amp; （和号）成为 &amp;amp</span><br><span class="line">&quot; （双引号）成为 &amp;quot</span><br><span class="line">&apos; （单引号）成为 &amp;#039</span><br><span class="line">&lt; （小于）成为 &amp;lt</span><br><span class="line">&gt; （大于）成为 &amp;gt</span><br></pre></td></tr></table></figure><p>能力有限，只能观摩一波，浅尝辄止。</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;hr&gt;
-&lt;p&gt;titles:bwapp(1)&lt;/p&gt;
-&lt;h2 id=&quot;tags-bwapp&quot;&gt;&lt;a href=&quot;#tags-bwapp&quot; class=&quot;headerlink&quot; title=&quot;tags:bwapp&quot;&gt;&lt;/a&gt;tags:bwapp&lt;/h2&gt;&lt;figure class
-      
-    
-    </summary>
-    
-    
-  </entry>
   
   <entry>
     <title>渗透测试初步学习之漏洞发现和源码泄露</title>
