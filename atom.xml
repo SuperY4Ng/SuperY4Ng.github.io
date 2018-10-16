@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-10-13T16:22:35.427Z</updated>
+  <updated>2018-10-16T14:16:39.645Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>8086通用指令</title>
+    <link href="http://yoursite.com/2018/10/16/8086%E9%80%9A%E7%94%A8%E6%8C%87%E4%BB%A4%E4%B9%8B%E9%80%9A%E7%94%A8%E5%AF%84%E5%AD%98%E5%99%A8/"/>
+    <id>http://yoursite.com/2018/10/16/8086通用指令之通用寄存器/</id>
+    <published>2018-10-15T16:00:00.000Z</published>
+    <updated>2018-10-16T14:16:39.645Z</updated>
+    
+    <content type="html"><![CDATA[<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">PS：https://blog.csdn.net/Super_Yiang/article/details/83098536</span></span><br></pre></td></tr></table></figure><h4 id="8086寄存器"><a href="#8086寄存器" class="headerlink" title="8086寄存器"></a>8086寄存器</h4><p>8086 有14个16位寄存器，这14个寄存器按其用途可分为</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(1)通用寄存器</span><br><span class="line"></span><br><span class="line">(2)指令指针</span><br><span class="line"></span><br><span class="line">(3)标志寄存器</span><br><span class="line"></span><br><span class="line">(4)段寄存器等4类。</span><br></pre></td></tr></table></figure><p> 有8个, 又可以分成2组，一组是数据寄存器(4个),另一组是指针寄存器及变址寄存器(4个)。</p><p>顾名思义，通用寄存器是那些你可以根据自己的意愿使用的寄存器，修改他们的值通常不会对计算机的运行造成很大的影响。 </p><p><img src="https://i.loli.net/2018/10/16/5bc5512b1983d.png" alt=""></p><p>通用寄存器的数据寄存器是两个字节，以AX为例，分为高8位（AH）低8位（AL）</p><p><img src="https://i.loli.net/2018/10/16/5bc595391ffef.png" alt=""></p><h4 id="基础汇编指令"><a href="#基础汇编指令" class="headerlink" title="基础汇编指令"></a>基础汇编指令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add al,1(如果ax=00FFH,那么ax会等于=0000H,进位标志CF变为1）al的值加1赋给al</span><br><span class="line">sub al,1 al的值减1赋给al</span><br><span class="line">mov ax,[1000H]  把值为1000H的地址放到ax</span><br><span class="line">push ax ESP指向的地址减2，把ax里的值压入栈</span><br><span class="line">pop ax  ESP指向的地址加2，把ax里的值弹出栈</span><br></pre></td></tr></table></figure><p>CPU是从高地址往低地址读取。</p><p><img src="https://i.loli.net/2018/10/16/5bc591559a6bd.png" alt=""></p><p><img src="https://i.loli.net/2018/10/16/5bc591a327aec.png" alt=""></p><p><img src="https://i.loli.net/2018/10/16/5bc5933ede6e8.png" alt=""></p><p><img src="https://i.loli.net/2018/10/16/5bc5f0adf1575.png" alt=""></p><h4 id="物理地址"><a href="#物理地址" class="headerlink" title="物理地址"></a>物理地址</h4><p>在存储器里以字节为单位存储 信息，为正确地存放或取得信息，每一个字节单元给以一个唯一的存储器地址，称为物理地址，又叫实际地址或绝对地址。</p><p>8086是16位的CPU，地址总线是20位</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">物理地址=段地址*10H+偏移地址</span><br><span class="line">例：</span><br><span class="line">CS：2000H，IP：0033H</span><br><span class="line">物理地址=2000H*10H+0033H=20033H</span><br></pre></td></tr></table></figure><h4 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h4><p>先进后出，后进先出，是从高地址往低地址存入。</p><p>ESP指向当前的栈顶，EBP是基址指针。</p><h4 id="内存寻址方式"><a href="#内存寻址方式" class="headerlink" title="内存寻址方式"></a>内存寻址方式</h4><p><img src="https://i.loli.net/2018/10/16/5bc5874307af1.png" alt=""></p><h4 id="标志寄存器"><a href="#标志寄存器" class="headerlink" title="标志寄存器"></a>标志寄存器</h4><p><img src="https://i.loli.net/2018/10/16/5bc5ec7fbecd4.png" alt=""></p><p><img src="https://i.loli.net/2018/10/16/5bc5edc3f1a10.png" alt=""></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;figure class=&quot;highlight http&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span clas
+      
+    
+    </summary>
+    
+      <category term="二进制" scheme="http://yoursite.com/categories/%E4%BA%8C%E8%BF%9B%E5%88%B6/"/>
+    
+    
+      <category term="二进制" scheme="http://yoursite.com/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/"/>
+    
+  </entry>
   
   <entry>
     <title>护网杯WP</title>

