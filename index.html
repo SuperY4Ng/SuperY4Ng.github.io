@@ -359,27 +359,46 @@ height:50vh;
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/29/豌豆杯wp/" >
+        <a class="abstract-title" href = "/2018/11/06/bwapp-A6/" >
             
-                <span>首届豌豆杯WriteUp</span>
+                <span>bwapp——A6(Sensitive Data Exposure)</span>
         </a>
         <div class="abstract-content">
-            1PS：https://blog.csdn.net/Super_Yiang/article/details/83506186
-由于比赛结束服务器关闭，所以赛后无法实现复现，造成writeup的可读性不强勿怪。
-WEB安全1.web签到题（100）1hint:请选手访问 http://101.231.137.47:20001/，获取flag。
-很明显链接点进去，滑稽，很多很多滑稽，既然是签到题，先F12查看页面源代码即可找到flag。
-2.输入密码查看flag（100）1hint:请选手访问 http://101.231.137.47:20002/4.php ,输入密码就可查看flag哦。...
+            1Ps:https://blog.csdn.net/Super_Yiang/article/details/83783659
+这个是bWAPP的第六节，Sensitive Data Exposure(==暴露敏感数据== )
+
+1.Base64 Encoding(Secret)顾名思义，就是密码被加密了。
+Low
+很明显，在cookie里，有secret这个参数，而且就是很明显的base64编码secret=QW55IGJ1Z3M%2F,%2F是被url编码了的，实际上是/，这里放上url编码表。
+
+
+
+backspace
+8%
+A
+41%
+a
+61%
+§
+%A7
+Õ
+%D5
+
+
+
+
+t...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/29</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/06</span>
             </div>
             <!-- tags  -->
             
             <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "CTF">CTF</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "bwapp">bwapp</a>
     
 </div>
             
@@ -1008,6 +1027,10 @@ HTML Injection - Reflected (GET)low
     
     
     
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 9
@@ -1026,7 +1049,7 @@ HTML Injection - Reflected (GET)low
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/29</span><a class="archive-post-title" href= "/2018/10/29/豌豆杯wp/" >首届豌豆杯WriteUp</a>
+            <span class="archive-post-date">11/06</span><a class="archive-post-title" href= "/2018/11/06/bwapp-A6/" >bwapp——A6(Sensitive Data Exposure)</a>
         </li>
     
     
@@ -1080,11 +1103,11 @@ HTML Injection - Reflected (GET)low
     
         <span class="sidebar-tag-name" data-tags="WEB"><span class="iconfont-archer">&#xe606;</span>WEB</span>
     
+        <span class="sidebar-tag-name" data-tags="bwapp"><span class="iconfont-archer">&#xe606;</span>bwapp</span>
+    
         <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
     
         <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
-    
-        <span class="sidebar-tag-name" data-tags="bwapp"><span class="iconfont-archer">&#xe606;</span>bwapp</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1125,9 +1148,9 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="Web开发"><span class="iconfont-archer">&#xe60a;</span>Web开发</span>
     
-        <span class="sidebar-category-name" data-categories="密码学"><span class="iconfont-archer">&#xe60a;</span>密码学</span>
-    
         <span class="sidebar-category-name" data-categories="玩转bwapp"><span class="iconfont-archer">&#xe60a;</span>玩转bwapp</span>
+    
+        <span class="sidebar-category-name" data-categories="密码学"><span class="iconfont-archer">&#xe60a;</span>密码学</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>

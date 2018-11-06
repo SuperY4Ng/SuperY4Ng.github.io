@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="John Doe">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="John Doe">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>bwapp——A6(Sensitive Data Exposure) · SuperY4Ng&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >SuperY4Ng&#39;s Blog</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">bwapp——A6(Sensitive Data Exposure)</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>SuperY4Ng's Blog</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            bwapp——A6(Sensitive Data Exposure)
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "bwapp">bwapp</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">3.2k</span>阅读时长: <span class="post-count reading-time">12 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/11/06</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Ps:https://blog.csdn.net/Super_Yiang/article/details/83783659</span></span><br></pre></td></tr></table></figure>
+<p>这个是bWAPP的第六节，<code>Sensitive Data Exposure</code>(==暴露敏感数据== )</p>
+<p><img src="https://i.loli.net/2018/11/05/5bdf8ea6c547e.png" alt=""></p>
+<h4 id="1-Base64-Encoding-Secret"><a href="#1-Base64-Encoding-Secret" class="headerlink" title="1.Base64 Encoding(Secret)"></a>1.Base64 Encoding(Secret)</h4><p>顾名思义，就是密码被加密了。</p>
+<h5 id="Low"><a href="#Low" class="headerlink" title="Low"></a>Low</h5><p><img src="https://i.loli.net/2018/11/05/5bdf9044a241b.png" alt=""></p>
+<p>很明显，在cookie里，有secret这个参数，而且就是很明显的base64编码<code>secret=QW55IGJ1Z3M%2F</code>,%2F是被url编码了的，实际上是/，这里放上url编码表。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">backspace</th>
+<th style="text-align:center"><strong>8%</strong></th>
+<th style="text-align:center">A</th>
+<th style="text-align:center">41%</th>
+<th style="text-align:center">a</th>
+<th style="text-align:center">61%</th>
+<th style="text-align:center">§</th>
+<th style="text-align:center">%A7</th>
+<th style="text-align:center">Õ</th>
+<th style="text-align:center">%D5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>tab</strong></td>
+<td style="text-align:center"><strong>9%</strong></td>
+<td style="text-align:center"><strong>B</strong></td>
+<td style="text-align:center"><strong>42%</strong></td>
+<td style="text-align:center"><strong>b</strong></td>
+<td style="text-align:center"><strong>62%</strong></td>
+<td style="text-align:center"><strong>«</strong></td>
+<td style="text-align:center"><strong>%AB</strong></td>
+<td style="text-align:center"><strong>Ö</strong></td>
+<td style="text-align:center"><strong>%D6</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>linefeed</strong></td>
+<td style="text-align:center"><strong>%0A</strong></td>
+<td style="text-align:center"><strong>C</strong></td>
+<td style="text-align:center"><strong>43%</strong></td>
+<td style="text-align:center"><strong>c</strong></td>
+<td style="text-align:center"><strong>63%</strong></td>
+<td style="text-align:center"><strong>¬</strong></td>
+<td style="text-align:center"><strong>%AC</strong></td>
+<td style="text-align:center"><strong>Ø</strong></td>
+<td style="text-align:center"><strong>%D8</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>creturn</strong></td>
+<td style="text-align:center"><strong>%0D</strong></td>
+<td style="text-align:center"><strong>D</strong></td>
+<td style="text-align:center"><strong>44%</strong></td>
+<td style="text-align:center"><strong>d</strong></td>
+<td style="text-align:center"><strong>64%</strong></td>
+<td style="text-align:center"><strong>¯</strong></td>
+<td style="text-align:center"><strong>%AD</strong></td>
+<td style="text-align:center"><strong>Ù</strong></td>
+<td style="text-align:center"><strong>%D9</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>space</strong></td>
+<td style="text-align:center"><strong>20%</strong></td>
+<td style="text-align:center"><strong>E</strong></td>
+<td style="text-align:center"><strong>45%</strong></td>
+<td style="text-align:center"><strong>e</strong></td>
+<td style="text-align:center"><strong>65%</strong></td>
+<td style="text-align:center"><strong>º</strong></td>
+<td style="text-align:center"><strong>%B0</strong></td>
+<td style="text-align:center"><strong>Ú</strong></td>
+<td style="text-align:center"><strong>%DA</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>!</strong></td>
+<td style="text-align:center"><strong>21%</strong></td>
+<td style="text-align:center"><strong>F</strong></td>
+<td style="text-align:center"><strong>46%</strong></td>
+<td style="text-align:center"><strong>f</strong></td>
+<td style="text-align:center"><strong>66%</strong></td>
+<td style="text-align:center"><strong>±</strong></td>
+<td style="text-align:center"><strong>%B1</strong></td>
+<td style="text-align:center"><strong>Û</strong></td>
+<td style="text-align:center"><strong>%DB</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>“</strong></td>
+<td style="text-align:center"><strong>22%</strong></td>
+<td style="text-align:center"><strong>G</strong></td>
+<td style="text-align:center"><strong>47%</strong></td>
+<td style="text-align:center"><strong>g</strong></td>
+<td style="text-align:center"><strong>67%</strong></td>
+<td style="text-align:center"><strong>ª</strong></td>
+<td style="text-align:center"><strong>%B2</strong></td>
+<td style="text-align:center"><strong>Ü</strong></td>
+<td style="text-align:center"><strong>%DC</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>#</strong></td>
+<td style="text-align:center"><strong>23%</strong></td>
+<td style="text-align:center"><strong>H</strong></td>
+<td style="text-align:center"><strong>48%</strong></td>
+<td style="text-align:center"><strong>h</strong></td>
+<td style="text-align:center"><strong>68%</strong></td>
+<td style="text-align:center"><strong>,</strong></td>
+<td style="text-align:center"><strong>%B4</strong></td>
+<td style="text-align:center"><strong>Ý</strong></td>
+<td style="text-align:center"><strong>%DD</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>$</strong></td>
+<td style="text-align:center"><strong>24%</strong></td>
+<td style="text-align:center"><strong>I</strong></td>
+<td style="text-align:center"><strong>49%</strong></td>
+<td style="text-align:center"><strong>i</strong></td>
+<td style="text-align:center"><strong>69%</strong></td>
+<td style="text-align:center"><strong>µ</strong></td>
+<td style="text-align:center"><strong>%B5</strong></td>
+<td style="text-align:center"><strong>Þ</strong></td>
+<td style="text-align:center"><strong>%DE</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>%</strong></td>
+<td style="text-align:center"><strong>25%</strong></td>
+<td style="text-align:center"><strong>J</strong></td>
+<td style="text-align:center"><strong>%4A</strong></td>
+<td style="text-align:center"><strong>j</strong></td>
+<td style="text-align:center"><strong>%6A</strong></td>
+<td style="text-align:center"><strong>»</strong></td>
+<td style="text-align:center"><strong>%BB</strong></td>
+<td style="text-align:center"><strong>ß</strong></td>
+<td style="text-align:center"><strong>%DF</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>&amp;</strong></td>
+<td style="text-align:center"><strong>26%</strong></td>
+<td style="text-align:center"><strong>K</strong></td>
+<td style="text-align:center"><strong>%4B</strong></td>
+<td style="text-align:center"><strong>k</strong></td>
+<td style="text-align:center"><strong>%6B</strong></td>
+<td style="text-align:center"><strong>¼</strong></td>
+<td style="text-align:center"><strong>%BC</strong></td>
+<td style="text-align:center"><strong>à</strong></td>
+<td style="text-align:center"><strong>%E0</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>‘</strong></td>
+<td style="text-align:center"><strong>27%</strong></td>
+<td style="text-align:center"><strong>L</strong></td>
+<td style="text-align:center"><strong>%4C</strong></td>
+<td style="text-align:center"><strong>l</strong></td>
+<td style="text-align:center"><strong>%6C</strong></td>
+<td style="text-align:center"><strong>½</strong></td>
+<td style="text-align:center"><strong>%BD</strong></td>
+<td style="text-align:center"><strong>á</strong></td>
+<td style="text-align:center"><strong>%E1</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>(</strong></td>
+<td style="text-align:center"><strong>28%</strong></td>
+<td style="text-align:center"><strong>M</strong></td>
+<td style="text-align:center"><strong>%4D</strong></td>
+<td style="text-align:center"><strong>m</strong></td>
+<td style="text-align:center"><strong>%6D</strong></td>
+<td style="text-align:center"><strong>¿</strong></td>
+<td style="text-align:center"><strong>%BF</strong></td>
+<td style="text-align:center"><strong>â</strong></td>
+<td style="text-align:center"><strong>%E2</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>)</strong></td>
+<td style="text-align:center"><strong>29%</strong></td>
+<td style="text-align:center"><strong>N</strong></td>
+<td style="text-align:center"><strong>%4E</strong></td>
+<td style="text-align:center"><strong>n</strong></td>
+<td style="text-align:center"><strong>%6E</strong></td>
+<td style="text-align:center"><strong>À</strong></td>
+<td style="text-align:center"><strong>%C0</strong></td>
+<td style="text-align:center"><strong>ã</strong></td>
+<td style="text-align:center"><strong>%E3</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>*</strong></td>
+<td style="text-align:center"><strong>%2A</strong></td>
+<td style="text-align:center"><strong>O</strong></td>
+<td style="text-align:center"><strong>%4F</strong></td>
+<td style="text-align:center"><strong>o</strong></td>
+<td style="text-align:center"><strong>%6F</strong></td>
+<td style="text-align:center"><strong>Á</strong></td>
+<td style="text-align:center"><strong>%C1</strong></td>
+<td style="text-align:center"><strong>ä</strong></td>
+<td style="text-align:center"><strong>%E4</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>+</strong></td>
+<td style="text-align:center"><strong>%2B</strong></td>
+<td style="text-align:center"><strong>P</strong></td>
+<td style="text-align:center"><strong>50%</strong></td>
+<td style="text-align:center"><strong>p</strong></td>
+<td style="text-align:center"><strong>70%</strong></td>
+<td style="text-align:center"><strong>Â</strong></td>
+<td style="text-align:center"><strong>%C2</strong></td>
+<td style="text-align:center"><strong>å</strong></td>
+<td style="text-align:center"><strong>%E5</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>,</strong></td>
+<td style="text-align:center"><strong>%2C</strong></td>
+<td style="text-align:center"><strong>Q</strong></td>
+<td style="text-align:center"><strong>51%</strong></td>
+<td style="text-align:center"><strong>q</strong></td>
+<td style="text-align:center"><strong>71%</strong></td>
+<td style="text-align:center"><strong>Ã</strong></td>
+<td style="text-align:center"><strong>%C3</strong></td>
+<td style="text-align:center"><strong>æ</strong></td>
+<td style="text-align:center"><strong>%E6</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>-</strong></td>
+<td style="text-align:center"><strong>%2D</strong></td>
+<td style="text-align:center"><strong>R</strong></td>
+<td style="text-align:center"><strong>52%</strong></td>
+<td style="text-align:center"><strong>r</strong></td>
+<td style="text-align:center"><strong>72%</strong></td>
+<td style="text-align:center"><strong>Ä</strong></td>
+<td style="text-align:center"><strong>%C4</strong></td>
+<td style="text-align:center"><strong>ç</strong></td>
+<td style="text-align:center"><strong>%E7</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>.</strong></td>
+<td style="text-align:center"><strong>%2E</strong></td>
+<td style="text-align:center"><strong>S</strong></td>
+<td style="text-align:center"><strong>53%</strong></td>
+<td style="text-align:center"><strong>s</strong></td>
+<td style="text-align:center"><strong>73%</strong></td>
+<td style="text-align:center"><strong>Å</strong></td>
+<td style="text-align:center"><strong>%C5</strong></td>
+<td style="text-align:center"><strong>è</strong></td>
+<td style="text-align:center"><strong>%E8</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>/</strong></td>
+<td style="text-align:center"><strong>%2F</strong></td>
+<td style="text-align:center"><strong>T</strong></td>
+<td style="text-align:center"><strong>54%</strong></td>
+<td style="text-align:center"><strong>t</strong></td>
+<td style="text-align:center"><strong>74%</strong></td>
+<td style="text-align:center"><strong>Æ</strong></td>
+<td style="text-align:center"><strong>%C6</strong></td>
+<td style="text-align:center"><strong>é</strong></td>
+<td style="text-align:center"><strong>%E9</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"><strong>30%</strong></td>
+<td style="text-align:center"><strong>U</strong></td>
+<td style="text-align:center"><strong>55%</strong></td>
+<td style="text-align:center"><strong>u</strong></td>
+<td style="text-align:center"><strong>75%</strong></td>
+<td style="text-align:center"><strong>Ç</strong></td>
+<td style="text-align:center"><strong>%C7</strong></td>
+<td style="text-align:center"><strong>ê</strong></td>
+<td style="text-align:center"><strong>%EA</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>1</strong></td>
+<td style="text-align:center"><strong>31%</strong></td>
+<td style="text-align:center"><strong>V</strong></td>
+<td style="text-align:center"><strong>56%</strong></td>
+<td style="text-align:center"><strong>v</strong></td>
+<td style="text-align:center"><strong>76%</strong></td>
+<td style="text-align:center"><strong>È</strong></td>
+<td style="text-align:center"><strong>%C8</strong></td>
+<td style="text-align:center"><strong>ë</strong></td>
+<td style="text-align:center"><strong>%EB</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>2</strong></td>
+<td style="text-align:center"><strong>32%</strong></td>
+<td style="text-align:center"><strong>W</strong></td>
+<td style="text-align:center"><strong>57%</strong></td>
+<td style="text-align:center"><strong>w</strong></td>
+<td style="text-align:center"><strong>77%</strong></td>
+<td style="text-align:center"><strong>É</strong></td>
+<td style="text-align:center"><strong>%C9</strong></td>
+<td style="text-align:center"><strong>ì</strong></td>
+<td style="text-align:center"><strong>%EC</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>3</strong></td>
+<td style="text-align:center"><strong>33%</strong></td>
+<td style="text-align:center"><strong>X</strong></td>
+<td style="text-align:center"><strong>58%</strong></td>
+<td style="text-align:center"><strong>x</strong></td>
+<td style="text-align:center"><strong>78%</strong></td>
+<td style="text-align:center"><strong>Ê</strong></td>
+<td style="text-align:center"><strong>%CA</strong></td>
+<td style="text-align:center"><strong>í</strong></td>
+<td style="text-align:center"><strong>%ED</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>4</strong></td>
+<td style="text-align:center"><strong>34%</strong></td>
+<td style="text-align:center"><strong>Y</strong></td>
+<td style="text-align:center"><strong>59%</strong></td>
+<td style="text-align:center"><strong>y</strong></td>
+<td style="text-align:center"><strong>79%</strong></td>
+<td style="text-align:center"><strong>Ë</strong></td>
+<td style="text-align:center"><strong>%CB</strong></td>
+<td style="text-align:center"><strong>î</strong></td>
+<td style="text-align:center"><strong>%EE</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>5</strong></td>
+<td style="text-align:center"><strong>35%</strong></td>
+<td style="text-align:center"><strong>Z</strong></td>
+<td style="text-align:center"><strong>%5A</strong></td>
+<td style="text-align:center"><strong>z</strong></td>
+<td style="text-align:center"><strong>%7A</strong></td>
+<td style="text-align:center"><strong>Ì</strong></td>
+<td style="text-align:center"><strong>%CC</strong></td>
+<td style="text-align:center"><strong>ï</strong></td>
+<td style="text-align:center"><strong>%EF</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>6</strong></td>
+<td style="text-align:center"><strong>36%</strong></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><strong>ð</strong></td>
+<td style="text-align:center"><strong>%F0</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>7</strong></td>
+<td style="text-align:center"><strong>37%</strong></td>
+<td style="text-align:center"><strong>?</strong></td>
+<td style="text-align:center"><strong>%3F</strong></td>
+<td style="text-align:center"><strong>{</strong></td>
+<td style="text-align:center"><strong>%7B</strong></td>
+<td style="text-align:center"><strong>Í</strong></td>
+<td style="text-align:center"><strong>%CD</strong></td>
+<td style="text-align:center"><strong>ñ</strong></td>
+<td style="text-align:center"><strong>%F1</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>8</strong></td>
+<td style="text-align:center"><strong>38%</strong></td>
+<td style="text-align:center"><strong>@</strong></td>
+<td style="text-align:center"><strong>40%</strong></td>
+<td style="text-align:center">**\</td>
+<td style="text-align:center">**</td>
+<td style="text-align:center"><strong>%7C</strong></td>
+<td style="text-align:center"><strong>Î</strong></td>
+<td style="text-align:center"><strong>%CE</strong></td>
+<td style="text-align:center"><strong>ò</strong></td>
+<td><strong>%F2</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>9</strong></td>
+<td style="text-align:center"><strong>39%</strong></td>
+<td style="text-align:center"><strong><em>[</em></strong></td>
+<td style="text-align:center"><strong>%5B</strong></td>
+<td style="text-align:center"><strong>}</strong></td>
+<td style="text-align:center"><strong>%7D</strong></td>
+<td style="text-align:center"><strong>Ï</strong></td>
+<td style="text-align:center"><strong>%CF</strong></td>
+<td style="text-align:center"><strong>ó</strong></td>
+<td style="text-align:center"><strong>%F3</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>:</strong></td>
+<td style="text-align:center"><strong>%3A</strong></td>
+<td style="text-align:center">/</td>
+<td style="text-align:center"><strong>%5C</strong></td>
+<td style="text-align:center"><strong>~</strong></td>
+<td style="text-align:center"><strong>%7E</strong></td>
+<td style="text-align:center"><strong>Ð</strong></td>
+<td style="text-align:center"><strong>%D0</strong></td>
+<td style="text-align:center"><strong>ô</strong></td>
+<td style="text-align:center"><strong>%F4</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>;</strong></td>
+<td style="text-align:center"><strong>%3B</strong></td>
+<td style="text-align:center"><strong>]</strong></td>
+<td style="text-align:center"><strong>%5D</strong></td>
+<td style="text-align:center"><strong>¢</strong></td>
+<td style="text-align:center"><strong>%A2</strong></td>
+<td style="text-align:center"><strong>Ñ</strong></td>
+<td style="text-align:center"><strong>%D1</strong></td>
+<td style="text-align:center"><strong>õ</strong></td>
+<td style="text-align:center"><strong>%F5</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>&lt;</strong></td>
+<td style="text-align:center"><strong>%3C</strong></td>
+<td style="text-align:center"><strong>^</strong></td>
+<td style="text-align:center"><strong>%5E</strong></td>
+<td style="text-align:center"><strong>£</strong></td>
+<td style="text-align:center"><strong>%A3</strong></td>
+<td style="text-align:center"><strong>Ò</strong></td>
+<td style="text-align:center"><strong>%D2</strong></td>
+<td style="text-align:center"><strong>ö</strong></td>
+<td style="text-align:center"><strong>%F6</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>=</strong></td>
+<td style="text-align:center"><strong>%3D</strong></td>
+<td style="text-align:center"><strong>_</strong></td>
+<td style="text-align:center"><strong>%5F</strong></td>
+<td style="text-align:center"><strong>¥</strong></td>
+<td style="text-align:center"><strong>%A5</strong></td>
+<td style="text-align:center"><strong>Ó</strong></td>
+<td style="text-align:center"><strong>%D3</strong></td>
+<td style="text-align:center"><strong>÷</strong></td>
+<td style="text-align:center"><strong>%F7</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>&gt;</strong></td>
+<td style="text-align:center"><strong>%3E</strong></td>
+<td style="text-align:center"><strong>`</strong></td>
+<td style="text-align:center"><strong>60%</strong></td>
+<td style="text-align:center">**\</td>
+<td style="text-align:center">**</td>
+<td style="text-align:center"><strong>%A6</strong></td>
+<td style="text-align:center"><strong>Ô</strong></td>
+<td style="text-align:center"><strong>%D4</strong></td>
+<td style="text-align:center"><strong>ø</strong></td>
+<td><strong>%F8</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><strong>ù</strong></td>
+<td style="text-align:center"><strong>%F9</strong></td>
+</tr>
+</tbody>
+</table>
+<p>所以<code>secret=QW55IGJ1Z3M/</code>然后base64解密就可以得到密码。</p>
+<p><img src="https://i.loli.net/2018/11/05/5bdfa0ab03345.png" alt=""></p>
+<h5 id="Medium-and-High"><a href="#Medium-and-High" class="headerlink" title="Medium and High"></a>Medium and High</h5><p>查看源码</p>
+<p><img src="https://i.loli.net/2018/11/05/5bdfa18c7d1ec.png" alt=""></p>
+<p>很明显从源码就可以看出，当<code>security_level=1</code>或者<code>security_level=2</code>时，secret是被sha1加密，<code>security_level=0</code>就是普通的base64加密。</p>
+<h4 id="BEAST-CRIME-BREACH-Attacks"><a href="#BEAST-CRIME-BREACH-Attacks" class="headerlink" title="BEAST/CRIME/BREACH Attacks"></a>BEAST/CRIME/BREACH Attacks</h4><p>The Lighttpd web server is vulnerable to the BEAST, CRIME and BREACH attacks. (bee-box only)</p>
+<p>Configure TLS 1.1 or above, disable SSL and HTTP compression!<br>HINT: test the SSL connection on port 9443 with the O-Saft tool…（使用O-Saft工具在端口9443上测试SSL连接…）</p>
+<h4 id="Clear-Text-HTTP-Credentials"><a href="#Clear-Text-HTTP-Credentials" class="headerlink" title="Clear Text HTTP (Credentials)"></a>Clear Text HTTP (Credentials)</h4><p>明文传输用户凭证 。</p>
+<h5 id="Low-1"><a href="#Low-1" class="headerlink" title="Low"></a>Low</h5><p>登录界面抓包</p>
+<p><img src="https://i.loli.net/2018/11/05/5bdfa6a40cd56.png" alt=""></p>
+<p>低级别用的是http，账户密码都是明文传输的。</p>
+<h5 id="Medium-and-High-1"><a href="#Medium-and-High-1" class="headerlink" title="Medium and High"></a>Medium and High</h5><p>查看源码</p>
+<p><img src="https://i.loli.net/2018/11/05/5bdfa76eaa101.png" alt=""></p>
+<p>很明显看到中高级就是用https的，是加密传输数据。</p>
+<h4 id="Heartbleed-Vulnerability"><a href="#Heartbleed-Vulnerability" class="headerlink" title="Heartbleed Vulnerability"></a>Heartbleed Vulnerability</h4><p>The Nginx web server is using a vulnerable OpenSSL version! ([bee-box]only)</p>
+<p>HINT: login on port 8443 and launch the attack script…(登录端口8443并启动攻击脚本…)</p>
+<p>Heartbleed Bug是流行的OpenSSL加密软件库中的一个严重漏洞。这种弱点允许在正常情况下通过用于保护Internet的SSL / TLS加密来窃取受保护的信息。SSL / TLS通过Internet为Web，电子邮件，即时消息（IM）和一些虚拟专用网络（VPN）等应用程序提供通信安全性和隐私。</p>
+<p>Heartbleed错误允许Internet上的任何人读取受OpenSSL软件易受攻击版本保护的系统的内存。这会破坏用于识别服务提供商的密钥，并加密流量，用户的名称和密码以及实际内容。这允许攻击者窃听通信，直接从服务和用户窃取数据并模仿服务和用户。</p>
+<h4 id="Host-Header-Attack-Reset-Poisoning"><a href="#Host-Header-Attack-Reset-Poisoning" class="headerlink" title="Host Header Attack (Reset Poisoning)"></a>Host Header Attack (Reset Poisoning)</h4><p>主机标头攻击</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">PS:https://www.acunetix.com/blog/articles/automated-detection-of-host-header-attacks/</span></span><br></pre></td></tr></table></figure>
+<p>通常的做法是，同一Web服务器在同一IP地址上托管多个网站或Web应用程序。这就是<em>主机</em>头存在的原因。主机头指定应处理传入HTTP请求的网站或Web应用程序。Web服务器使用此标头的值将请求分派给指定的网站或Web应用程序。托管在同一IP地址上的每个Web应用程序通常称为<em>虚拟主机</em>。什么构成主机头攻击？</p>
+<p>如果我们指定无效的主机标头会发生什么？大多数Web服务器都配置为将无法识别的主机头传递给列表中的第一个虚拟主机。因此，可以将具有任意主机头的请求发送到第一个虚拟主机。</p>
+<p>传递任意主机头的另一种方法是使用<em>X-Forwarded-Host</em>头。在某些配置中，此标头将重写Host标头的值。因此，可以提出以下请求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET / HTTP/1.1</span><br><span class="line">Host: www.example.com</span><br><span class="line">X-Forwarded-Host: www.attacker.com</span><br></pre></td></tr></table></figure>
+<p>许多Web应用程序依赖于HTTP <em>主机</em>头来理解“它们在哪里”。不幸的是，许多应用程序开发人员没有意识到HTTP主机头是由用户控制的。您可能已经知道，在应用程序安全性中，用户输入应<strong>始终</strong>被视为<strong>不安全</strong>，因此，如果<strong>没有</strong>先验证它，就<strong>永远不会</strong>信任。</p>
+<p>主机头的使用在PHP Web应用程序中尤为常见，但是，它肯定不是PHP Web应用程序特有的问题。以下示例中的PHP脚本是主机头的典型且危险的用法。就bWAPP的这个例子而言</p>
+<p><img src="https://i.loli.net/2018/11/05/5bdfb4e1c88d0.png" alt=""></p>
+<p>可以看到当低级别的时候，<code>$server = $_SERVER[&quot;HTTP_HOST&quot;]</code>，这就很危险。主要的头部攻击启用的两个主要攻击媒介是网络缓存中毒，以及滥用其他渠道进行敏感操作，例如密码重置。</p>
+<h5 id="网络缓存中毒"><a href="#网络缓存中毒" class="headerlink" title="网络缓存中毒"></a>网络缓存中毒</h5><p>Web缓存中毒是攻击者用来操纵Web缓存以向请求页面的任何人提供有毒内容的技术。 </p>
+<p>为此，攻击者需要毒害由站点本身或下游提供者，内容传递网络（CDN），聚合器或客户端与服务器之间的其他缓存机制运行的缓存代理。然后，缓存将向被请求它的任何人提供有毒内容，受害者无法控制向他们提供的恶意内容。</p>
+<h5 id="密码重置中毒"><a href="#密码重置中毒" class="headerlink" title="密码重置中毒"></a>密码重置中毒</h5><p>实现密码重置功能的常用方法是生成秘密令牌并发送包含此令牌的链接的电子邮件。如果攻击者通过攻击者控制的主机头请求密码重置，会发生什么？</p>
+<p>如果Web应用程序在编写重置链接时使用主机头值，则攻击者可能会中毒发送给受害者的密码重置链接。如果受害者点击电子邮件中的中毒重置链接，攻击者将获得密码重置令牌并可以继续并重置受害者的密码。</p>
+<h4 id="HTML5-Web-Storage-Secret"><a href="#HTML5-Web-Storage-Secret" class="headerlink" title="HTML5 Web Storage (Secret)"></a>HTML5 Web Storage (Secret)</h4><h5 id="WebStorage"><a href="#WebStorage" class="headerlink" title="WebStorage"></a>WebStorage</h5><p>WebStorage是HTML新增的本地存储解决方案之一，但并不是为了取代cookie而制定的标准，cookie作为HTTP协议的一部分用来处理客户端和服务器通信是不可或缺的，session正是依赖于实现的客户端状态保持。WebStorage的意图在于解决本来不应该cookie做，却不得不用cookie的本地存储。 </p>
+<p>但是该例中不应该将secret这种重要的信息用WebStorage存储在本地。</p>
+<p><img src="https://i.loli.net/2018/11/06/5be0fa95bf589.png" alt=""></p>
+<h4 id="POODLE-Vulnerability"><a href="#POODLE-Vulnerability" class="headerlink" title="POODLE Vulnerability"></a>POODLE Vulnerability</h4><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">PS:https://blog.csdn.net/zhaihaifei/article/details/47278041</span></span><br></pre></td></tr></table></figure>
+<h5 id="POODLE漏洞：在Downgraded-Legacy-Encryption上填充Oracle"><a href="#POODLE漏洞：在Downgraded-Legacy-Encryption上填充Oracle" class="headerlink" title="POODLE漏洞：在Downgraded Legacy Encryption上填充Oracle"></a>POODLE漏洞：在Downgraded Legacy Encryption上填充Oracle</h5><p>SSLv3降级加密协议Padding Oracle攻击（POODLE）技术分析</p>
+<p>漏洞概述：</p>
+<p>　　SSL 3.0的历史非常久远，已经有将近15年了，现今几乎所有的浏览器都支持该协议。今天该协议爆出了一个漏洞，该漏洞由谷歌公司率先发现，下面是此漏洞的大致描述。<br>　　攻击者可利用该漏洞获取安全连接当中某些是SSLv3加密后的明文内容。因为兼容性问题，当浏览器进行HTTPS连接失败的时候，将会尝试使用旧的协议版本，这其中就包括SSL 3.0，于是加密协议由更加安全的协议（比如：TLS 1.0）降级成SSL 3.0。<br>　　攻击者在此漏洞利用中扮演一种中间人的角色，比如A，C进行通信，B（攻击者）在中间作为一个代理，B截获A，C之间的通信后经过SSLv3加密后的数据包，利用SSLv3中存在的漏洞，解密得到其数据包的明文信息，而这些明文信息极有可能是用户的隐私数据，比如Cookie，这样攻击者就可以拿到这些隐私数据，进行更深层次的攻击。<br>　　由此可见此，黑客们可以利用此漏洞。截获用户的隐私数据，进而造成了用户隐私的泄漏，危害较大，应当引起我们的高度重视，而现今唯一解决该问题的方式就是禁用SSLv3加密协议。</p>
+<h5 id="构造一个SSLv3的web中间人攻击"><a href="#构造一个SSLv3的web中间人攻击" class="headerlink" title="构造一个SSLv3的web中间人攻击"></a>构造一个SSLv3的web中间人攻击</h5><p>​    如果B服务器上的JavaScript可以让A发送大量带cookie的请求，例如让A去访问一个社交网站而A本身保存有那个社交网站的cookie（根据cookie机制每次请求肯定会使用同样的cookie）。通过构造大量SSLv3请求再结合截包替换SSL数据可以做到逐字节还原cookie字段，而在这种情况下cookie作为敏感信息，地位和用户名+密码是相同的。  下面假设填充粒度为8字节，某社交网站的cookie为abcdefgh。  　　</p>
+<p>​    首先JavaScript可以让用户A生成一个图中第一行所示的明文web请求包…B服务器拿到使用CBC模式下的SSLv3数据然后将最末尾块替换为左起第四个块的密文然后反复发送这个包直到解密后的Cn[7]碰巧为7（因为每次连接key都不同），收到连接成功信息。使用之前介绍的反推公式（L为8代入）可以反推出cookie字段第8字节为’h’。  　　</p>
+<p>​    然后通过填充请求路径字段让A生成一个图中第二行所示的“右移1字节”的请求包…同样方法可以推算出cookie字段第7字节’g’。  　　依此类推直到获取整个cookie值”abcdefg”。此时黑客通过中间人攻击已经获得用户cookie，用户隐私暴露无遗。 </p>
+<h5 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h5><p>​    目前解决该问题可以禁用SSL3.0，或者SSL3.0中使用的CBC模式加密，但是有可能造成兼容性问题。建议支持TLS_FALLBACK_SCSV，这可以解决重试连接失败的问题，从而防止攻击者强制浏览器使用SSL3.0。 它还可以防止降级到TLS1.2至1.1或1.0，可能有助于防止未来的攻击。</p>
+<h4 id="SSL-2-0-Deprecated-Protocol"><a href="#SSL-2-0-Deprecated-Protocol" class="headerlink" title="SSL 2.0 Deprecated Protocol"></a>SSL 2.0 Deprecated Protocol</h4><p>远程服务使用具有已知弱点的旧已弃用协议对流量进行加密。 </p>
+<p>SSL 2.0是1995年第一个公开发布的SSL版本。此版本的SSL包含许多导致SSL 3.0引入的安全问题。SSL 3.0于1996年发布，完全重新设计了协议。</p>
+<p>由于SSL2.0中出现的问题，协议使用起来不安全，应该完全禁用。<br>由于<a href="https://www.acunetix.com/blog/articles/poodle-gives-final-bite-puts-sslv3-rest/" target="_blank" rel="noopener">POODLE</a>（Padding Oracle On Downgraded <a href="https://www.acunetix.com/blog/articles/poodle-gives-final-bite-puts-sslv3-rest/" target="_blank" rel="noopener">Legacy.Encryption</a>）漏洞，SSL 3.0使用起来也不安全，应该被禁用以避免攻击者检索到安全连接的明文。此外，Elliptic Curve Cryptography（本文稍后将讨论）不能与SSL3.0一起使用。</p>
+<p>Internet Explorer 6是唯一仍然使用SSL3.0的浏览器。因此，除非仍然需要支持<a href="https://developer.microsoft.com/en-us/microsoft-edge/ie6countdown/" target="_blank" rel="noopener">旧版Internet Explorer 6</a>浏览器，否则应禁用SSL 3.0。</p>
+<h4 id="Text-Files-Accounts"><a href="#Text-Files-Accounts" class="headerlink" title="Text Files (Accounts)"></a>Text Files (Accounts)</h4><h5 id="查看源码"><a href="#查看源码" class="headerlink" title="查看源码"></a>查看源码</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span>($_COOKIE[<span class="string">"security_level"</span>])</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">"0"</span> :</span><br><span class="line">			$line = <span class="string">"'"</span> . $username . <span class="string">"', '"</span> . $password . <span class="string">"'"</span> . <span class="string">"\r\n"</span>;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">"1"</span> :</span><br><span class="line">			$username = xss_check_3($username);</span><br><span class="line">			$password = sha1($password, <span class="keyword">false</span>);</span><br><span class="line">			$line = <span class="string">"'"</span> . $username . <span class="string">"', '"</span> . $password . <span class="string">"'"</span> . <span class="string">"\r\n"</span>;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">"2"</span> :</span><br><span class="line">			$username = xss_check_3($username);</span><br><span class="line">			$salt = md5(uniqid());</span><br><span class="line">			<span class="comment">// $password = sha1($salt . $password, false);</span></span><br><span class="line">			<span class="comment">//$password = hash("sha512", $salt . $password, false);</span></span><br><span class="line">			$password = hash(<span class="string">"sha256"</span>, $salt . $password, <span class="keyword">false</span>);</span><br><span class="line">			$line = <span class="string">"'"</span> . $username . <span class="string">"', '"</span> . $password . <span class="string">"', 'salt:"</span> . $salt . <span class="string">"'"</span> . <span class="string">"\r\n"</span>;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">default</span> :</span><br><span class="line">			$line = <span class="string">"'"</span> . $username . <span class="string">"', '"</span> . $password . <span class="string">"'"</span> . <span class="string">"\r\n"</span>;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看得出来，Low级别的账号密码都是明文传输的，这是很不安全的。Medium级别的将密码进行了sha1加密，但是这还不是很安全，因为还是可以通过字典爆破或者暴力破解甚至可以通过查表的方式找出密码。而High级别的用的是hash加盐加密技术。</p>
+<p>盐（Salt）是什么？就是一个随机生成的字符串。我们将盐与原始密码连接（concat）在一起（放在前面或后面都可以），然后将concat后的字符串加密。采用这种方式加密密码，查表法就不灵了（因为盐是随机生成的）。</p>
+<p><strong>但是随便加盐会有很多问题，就是如果采用md5(salt+message)，这种方式会遇到<a href="https://xz.aliyun.com/t/2563" target="_blank" rel="noopener">哈希长度扩展攻击</a></strong></p>
+<p>这实际上就是Hmac算法：Keyed-Hashing for Message Authentication。它通过一个标准算法，在计算哈希的过程中，把key混入计算过程中。</p>
+<p>和我们自定义的加salt算法不同，Hmac算法针对所有哈希算法都通用，无论是MD5还是SHA-1。采用Hmac替代我们自己的salt算法，可以使程序算法更标准化，也更安全。</p>
+<p>Python自带的hmac模块实现了标准的Hmac算法。我们来看看如何使用hmac实现带key的哈希。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> hmac</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>message = <span class="string">b'Hello, world!'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>key = <span class="string">b'secret'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>h = hmac.new(key, message, digestmod=<span class="string">'MD5'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># 如果消息很长，可以多次调用h.update(msg)</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>h.hexdigest()</span><br><span class="line"><span class="string">'fa4ee7d173f2d97ee79022d1a7355bcf'</span></span><br></pre></td></tr></table></figure>
+<h5 id="如何加盐才是正确的姿势"><a href="#如何加盐才是正确的姿势" class="headerlink" title="如何加盐才是正确的姿势"></a>如何加盐才是正确的姿势</h5><ol>
+<li>MD5(MD5(password)+salt)</li>
+<li>SHA512(SHA512(password)+salt)</li>
+<li>引入慢哈希: bcrypt(SHA512(password), salt, cost)</li>
+</ol>
+
+    </article>
+    <!-- license  -->
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/10/16/8086通用指令之通用寄存器/" title= "8086通用指令">
+                    <div class="prevTitle">8086通用指令</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:2414617455@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/SuperY4Ng" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/wechat.png" />
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title=qq>
+                  
+                  <img class="profile-qr" src="/assets/QQ.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title=rss></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Base64-Encoding-Secret"><span class="toc-number">1.</span> <span class="toc-text">1.Base64 Encoding(Secret)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Low"><span class="toc-number">1.1.</span> <span class="toc-text">Low</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Medium-and-High"><span class="toc-number">1.2.</span> <span class="toc-text">Medium and High</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BEAST-CRIME-BREACH-Attacks"><span class="toc-number">2.</span> <span class="toc-text">BEAST/CRIME/BREACH Attacks</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Clear-Text-HTTP-Credentials"><span class="toc-number">3.</span> <span class="toc-text">Clear Text HTTP (Credentials)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Low-1"><span class="toc-number">3.1.</span> <span class="toc-text">Low</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Medium-and-High-1"><span class="toc-number">3.2.</span> <span class="toc-text">Medium and High</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Heartbleed-Vulnerability"><span class="toc-number">4.</span> <span class="toc-text">Heartbleed Vulnerability</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Host-Header-Attack-Reset-Poisoning"><span class="toc-number">5.</span> <span class="toc-text">Host Header Attack (Reset Poisoning)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#网络缓存中毒"><span class="toc-number">5.1.</span> <span class="toc-text">网络缓存中毒</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#密码重置中毒"><span class="toc-number">5.2.</span> <span class="toc-text">密码重置中毒</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HTML5-Web-Storage-Secret"><span class="toc-number">6.</span> <span class="toc-text">HTML5 Web Storage (Secret)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#WebStorage"><span class="toc-number">6.1.</span> <span class="toc-text">WebStorage</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#POODLE-Vulnerability"><span class="toc-number">7.</span> <span class="toc-text">POODLE Vulnerability</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#POODLE漏洞：在Downgraded-Legacy-Encryption上填充Oracle"><span class="toc-number">7.1.</span> <span class="toc-text">POODLE漏洞：在Downgraded Legacy Encryption上填充Oracle</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#构造一个SSLv3的web中间人攻击"><span class="toc-number">7.2.</span> <span class="toc-text">构造一个SSLv3的web中间人攻击</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#解决方案"><span class="toc-number">7.3.</span> <span class="toc-text">解决方案</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SSL-2-0-Deprecated-Protocol"><span class="toc-number">8.</span> <span class="toc-text">SSL 2.0 Deprecated Protocol</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Text-Files-Accounts"><span class="toc-number">9.</span> <span class="toc-text">Text Files (Accounts)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#查看源码"><span class="toc-number">9.1.</span> <span class="toc-text">查看源码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#如何加盐才是正确的姿势"><span class="toc-number">9.2.</span> <span class="toc-text">如何加盐才是正确的姿势</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 9
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/06</span><a class="archive-post-title" href= "/2018/11/06/bwapp-A6/" >bwapp——A6(Sensitive Data Exposure)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span><a class="archive-post-title" href= "/2018/10/16/8086通用指令之通用寄存器/" >8086通用指令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/14</span><a class="archive-post-title" href= "/2018/10/14/护网杯WP/" >护网杯WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/10</span><a class="archive-post-title" href= "/2018/10/10/流密码/" >流密码</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/08</span><a class="archive-post-title" href= "/2018/10/08/bwapp(1)/" >bwapp(1)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href= "/2018/09/16/渗透测试初步学习之信息收集/" >渗透测试初步学习之信息收集</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href= "/2018/09/16/渗透测试初步学习之漏洞发现/" >渗透测试初步学习之漏洞发现和源码泄露</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href= "/2018/09/16/web开发快速入门(一)/" >WEB开发快速入门（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href= "/2018/09/16/I春秋CTF训练营web题解（一）/" >I春秋CTF训练营web题解（一）</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="二进制"><span class="iconfont-archer">&#xe606;</span>二进制</span>
+    
+        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="WEB"><span class="iconfont-archer">&#xe606;</span>WEB</span>
+    
+        <span class="sidebar-tag-name" data-tags="bwapp"><span class="iconfont-archer">&#xe606;</span>bwapp</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="二进制"><span class="iconfont-archer">&#xe60a;</span>二进制</span>
+    
+        <span class="sidebar-category-name" data-categories="CTF"><span class="iconfont-archer">&#xe60a;</span>CTF</span>
+    
+        <span class="sidebar-category-name" data-categories="Web开发"><span class="iconfont-archer">&#xe60a;</span>Web开发</span>
+    
+        <span class="sidebar-category-name" data-categories="玩转bwapp"><span class="iconfont-archer">&#xe60a;</span>玩转bwapp</span>
+    
+        <span class="sidebar-category-name" data-categories="密码学"><span class="iconfont-archer">&#xe60a;</span>密码学</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "John Doe"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
