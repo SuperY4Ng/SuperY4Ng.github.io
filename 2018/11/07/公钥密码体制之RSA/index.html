@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="John Doe">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="John Doe">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>公钥密码体制之RSA · SuperY4Ng&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >SuperY4Ng&#39;s Blog</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">公钥密码体制之RSA</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>SuperY4Ng's Blog</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            公钥密码体制之RSA
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "密码学">密码学</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">3.4k</span>阅读时长: <span class="post-count reading-time">14 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/11/07</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">PS：https://blog.csdn.net/Super_Yiang/article/details/83824606</span></span><br></pre></td></tr></table></figure>
+<p>记一次密码学上课所学的公钥密码体制学习。从一开始的古典密码到流密码再是分组密码，再是现在的公钥密码体制。</p>
+<h4 id="产生原因"><a href="#产生原因" class="headerlink" title="产生原因"></a>产生原因</h4><p>公钥密码体制的产生主要是因为两个方面的原因：一是由于常规的密钥密码体制的密钥分配问题，另一种是由于对数字签名的需求。</p>
+<p>在<strong>对称密钥密码体制</strong>中，加密、解密使用同样的密钥，有密钥生成函数将种子密钥生成加密密钥然后从特别的通道由发送者和接受者分别保存。加密、解密得时候，采用这种方法的主要问题在于密钥的生成、注入、存储、管理和分发，特别是随着用户的增加，密钥的需求量也是成倍增加。在网络通信的过程中，密钥的分配是有个难以解决的问题。</p>
+<p>而所谓的<strong>公钥密码体制</strong>，是使用不同的加密密钥和解密秘钥。在加解密过程中，用公钥（P~k~）即公开密钥加密，用私钥（S~k~）即秘密密钥解密。任何用户都可将传送给此用户的信息用公钥加密发送，而该用户唯一保存的私人密钥是保密的，也只有它能将密文复原、解密。</p>
+<p>如果是用来数字签名的话，则是用私钥加密，公钥解密。 </p>
+<p>在这里主要想记录的是当前使用的比较多的公钥密码体制</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.RSA算法</span><br><span class="line">2.椭圆曲线密码体制（ECC）</span><br></pre></td></tr></table></figure>
+<h4 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h4><p>RSA的安全性主要是依赖于大整数分解大质数因子。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">PS：https://blog.csdn.net/flurry_rain/article/details/77970691（详细请看）</span></span><br></pre></td></tr></table></figure>
+<h5 id="RSA相关的数论知识"><a href="#RSA相关的数论知识" class="headerlink" title="RSA相关的数论知识"></a><strong>RSA相关的数论知识</strong></h5><ol>
+<li>一个大于1的整数p，若除1和起本身之外没有其他正整数因数（约数），称P为素数。</li>
+<li>若整数a和b最大公约数为1，则称a，b互素，记为（gcd（a，b）= 1）。</li>
+<li>设n为正整数，a和b为整数，若a和b被n除后所得余数相同，称a和b模n同余，记为a≡b（mod n）。此式被称为同余式。若n能整除a则同余式表示为a≡0（mod n）。</li>
+</ol>
+<p>两个整数模n同余的等价说法有：a和b被n除余数相同。a-b被n整除。a和b在模n的同一个剩余类中。存在整数s使得a=sn+b。</p>
+<ol start="4">
+<li>同余式的一些运算性质，</li>
+</ol>
+<p>（1） 若a≡b（mod n），c≡d（mod n）则有ac≡bd（mod n）。特别的有，ka≡kb（mod n），k为任意整数。</p>
+<p>（2） 若a≡b（mod n），d是a，b，n的公因数，则(a/d) ≡(b/d)（mod n/d）。特别的有an≡bn（mod n），n为正整数。</p>
+<p>（3） 若ka≡kb（mod n），且k与n互素时，有a≡b（mod n）。（同余式消去律）</p>
+<ol start="5">
+<li>设n为正整数 ,则任何一个整数被n除 ,余数必为0,1,2,…,n-1中的某一个,把整数集中被n除余数相同的数分别归为一类,记为[0],[1],[2]…,[n-1],这样就按模是否同余把整数集分成n类,其中每一类都称为模n的一个剩余类。显然,每个整数必属于上述类中的一类,被n除余数不同的数必属于上述的不同类中。若a0,a1,a3…,an-1分别取自上述类的不同类中,称a0,a1,a3…,an-1为模n的一个完全剩余系,该剩余系中的数两两模n不同余。</li>
+<li>含有未知量的同余式称为同余方程。一次同余方程是最简单的一种,其一般形式为ax≡b（mod n）。若a，n的最大公约数d能整除b，则ax≡b（mod n）有解。且恰有d个解。若a，n的最大公约数d不能能整除b，则ax≡b（mod n）无解。例如同余方程7x≡1（mod 5）。7与5最大公约数为1，能被b=1整除，故有一个解。7x≡1（mod 5）≡6≡11≡21（mod5）。由于7与5互素有消去律得x=3。</li>
+</ol>
+<p>一般地 解同余方程的步骤为 ①判断解的情况 ②当同余方程的a，b，n有公因数时 ,约去公因数化简方程 ③利用同余的定义和消去律求方程的解。</p>
+<ol start="7">
+<li>费马小定理：设任意整数a和素数p互素[微软中国4] ，则ap-1 ≡1（mod p）。</li>
+<li>欧拉定理：若n,a为正整数，且n,a互质，(a,n) = 1，则a^φ(n) ≡ 1 (mod n)。</li>
+<li>模运算极其性质：</li>
+</ol>
+<p><strong>基本理论:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">基本概念：</span><br><span class="line"></span><br><span class="line">给定一个正整数p，任意一个整数n，一定存在等式 n = kp + r ；</span><br><span class="line"></span><br><span class="line">其中k、r是整数，且 0 ≤ r &lt; p，称呼k为n除以p的商，r为n除以p的余数。</span><br><span class="line"></span><br><span class="line">对于正整数p和整数a,b，定义如下运算：</span><br><span class="line"></span><br><span class="line">取模运算：a % p（或a mod p），表示a除以p的余数。</span><br><span class="line"></span><br><span class="line">模p加法：(a + b) % p ，其结果是a+b算术和除以p的余数，也就是说，(a+b) = kp +r，则(a + b) % p = r。</span><br><span class="line"></span><br><span class="line">模p减法：(a-b) % p ，其结果是a-b算术差除以p的余数。</span><br><span class="line"></span><br><span class="line">模p乘法：(a * b) % p，其结果是 a * b算术乘法除以p的余数。</span><br></pre></td></tr></table></figure>
+<p>说明：</p>
+<ol>
+<li>同余式：正整数a，b对p取模，它们的余数相同，记做 a ≡ b % p或者a ≡ b (mod p)。</li>
+<li>n % p得到结果的正负由被除数n决定,与p无关。例如：7%4 = 3， -7%4 = -3， 7%-4 = 3， -7%-4 = -3。</li>
+</ol>
+<p><strong>基本性质:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">（1）若p|(a-b)，则a≡b (% p)。例如 11 ≡ 4 (% 7)， 18 ≡ 4(% 7)</span><br><span class="line"></span><br><span class="line">（2）(a % p)=(b % p)意味a≡b (% p)</span><br><span class="line"></span><br><span class="line">（3）对称性：a≡b (% p)等价于b≡a (% p)</span><br><span class="line"></span><br><span class="line">（4）传递性：若a≡b (% p)且b≡c (% p) ，则a≡c (% p)</span><br></pre></td></tr></table></figure>
+<p><strong>运算规则</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">模运算与基本四则运算有些相似，但是除法例外。其规则如下：</span><br><span class="line"></span><br><span class="line">        (a + b) % p = (a % p + b % p) % p （1）</span><br><span class="line"></span><br><span class="line">        (a - b) % p = (a % p - b % p) % p （2）</span><br><span class="line"></span><br><span class="line">        (a * b) % p = (a % p * b % p) % p （3）</span><br><span class="line"></span><br><span class="line">        (a^b) % p = ((a % p)^b) % p （4）</span><br><span class="line"></span><br><span class="line">结合率： ((a+b) % p + c) % p = (a + (b+c) % p) % p （5）</span><br><span class="line"></span><br><span class="line">        ((a*b) % p * c)% p = (a * (b*c) % p) % p （6）</span><br><span class="line"></span><br><span class="line">交换率： (a + b) % p = (b+a) % p （7）</span><br><span class="line"></span><br><span class="line">        (a * b) % p = (b * a) % p （8）</span><br><span class="line"></span><br><span class="line">分配率： ((a +b)% p * c) % p = ((a * c) % p + (b * c) % p) % p （9）</span><br></pre></td></tr></table></figure>
+<p><strong>重要定理</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">若a≡b (% p)，则对于任意的c，都有(a + c) ≡ (b + c) (%p)；（10）</span><br><span class="line"></span><br><span class="line">若a≡b (% p)，则对于任意的c，都有(a * c) ≡ (b * c) (%p)；（11）</span><br><span class="line"></span><br><span class="line">若a≡b (% p)，c≡d (% p)，则 (a + c) ≡ (b + d) (%p)，(a - c) ≡ (b - d) (%p)，(a * c) ≡ (b * d) (%p)，(a / c) ≡ (b / d) (%p)； （12）</span><br><span class="line"></span><br><span class="line">若a≡b (% p)，则对于任意的c，都有ac≡ bc (%p)； （13）</span><br></pre></td></tr></table></figure>
+<h5 id="RSA算法及证明"><a href="#RSA算法及证明" class="headerlink" title="RSA算法及证明"></a><strong>RSA算法及证明</strong></h5><p><strong>1. RSA定理证明：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">定理：设p，q是不同的素数，n=pq记φ(n)=(p-1)(q-1),如果e，d是与φ(n)互素的两个正整数（e,d&lt;φ(n)),并满足ed≡1(mod φ(n)),则对于每个整数x,都有xed≡x(mod n)。</span><br><span class="line"></span><br><span class="line">分析：为了证明xed≡x(mod n)，只要证明φ(n)是xed-x的因数即可。又因为n=pq，而p，q都是素数，故只要证明p和q都是xed-x的因数即可，即</span><br><span class="line"></span><br><span class="line">xed≡x(mod p) （1）</span><br><span class="line"></span><br><span class="line">xed≡x(mod q) （2）</span><br><span class="line"></span><br><span class="line">证明：证明式1，若p是x的因数则式1必然成立 </span><br><span class="line">若p不是x的因数，则由ed≡1(mod φ(n))得ed-1=k(p-1)(q-1),k为任意整数。则xed=xk(p-1)(q-1)+1 = x*（xp-1）k(q-1)</span><br><span class="line">根据费马小定理因为x与p互素所以xp-1≡1（mod p） </span><br><span class="line">所以xed≡x*（1）k(q-1) ≡x（mod p）</span><br><span class="line"></span><br><span class="line">同理可证xed≡x(mod q)</span><br></pre></td></tr></table></figure>
+<p><strong>2.RSA定理与RSA加密算法：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">RSA加密算法为： </span><br><span class="line"></span><br><span class="line">(1) 取两个大素数p,q (保密)； </span><br><span class="line">(2) 计算 n=p*q(公开)，φ(n)=(p-1)*(q-1) (保密)； </span><br><span class="line">(3) 随机选取整数e，满足 gcd(e, φ(n))=1 （e与φ(n)互素）(公开)； </span><br><span class="line">(4) 计算 d 满足 d*e≡1 (mod φ(n)) (保密)； （d为e的逆元，可通过扩展的欧几里得算法进行求解）</span><br><span class="line">(5) ｛e，n｝为公钥，｛d，n｝为私钥，也可以用｛e，d｝表示密钥对 </span><br><span class="line">(6) 加密时c = xe mod n ；解密时 x = cd mod n </span><br><span class="line">(7) 签名时c = xd mod n ；解密时 x = ce mod n </span><br><span class="line">问题：为什么xed≡x(mod n) 就能保证(6)和(7)正确？ </span><br><span class="line">分析：解xed≡x(mod n)同余式方程，该方程可能有n个解，这n个解都在模n的同一个剩余类中，小于n的解只有一个，由于明文小于n，则该解即是明文x。而xed mod n得到的就是小于n的那个解。 </span><br><span class="line">另外，注意密文c并不等于xe而是c≡xe（mod n）。这里有上一段中我们知道要想求出明文x，解同余式方程xed≡x(mod n)可得，这时只要等式左边的数与X同余就能得到正确的明文。由于c≡xe（mod n），所以可得cd≡xed（mod n）,所以cd≡xe（mod n）。</span><br></pre></td></tr></table></figure>
+<p><strong>从另一个角度解释为什么RSA加密和解密过程是互逆的：</strong> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">将问题改为证明：A^e mod n = B^(e*d)mod n-----------1 </span><br><span class="line">即B^(e*d)mod n = B </span><br><span class="line">其中A为密文，B为明文。 证明：因为ed+1=（p-1）（q-1）所以B^(e*d)=B^(k(p-1)(q-1)+1), </span><br><span class="line">当B与n互素时，根据欧拉定理有: </span><br><span class="line">B^(k(p-1)(q-1)+1) mod n </span><br><span class="line">= B*B^ k(p-1)(q-1) mod n </span><br><span class="line">= (B mod n )*((B^(p-1)(q-1))^k mod n) </span><br><span class="line">= (B mod n ) * (((B^(p-1)(q-1)) mod n) ^ k ) mod n) </span><br><span class="line">= B * (1^k mod n) </span><br><span class="line">=B</span><br><span class="line">当B与n不互素时，由于n=p*q，B必然能被p或者q整除，假设B=k*p,则B与q互素。再运用费马定理有：</span><br><span class="line">B^(q-1) = 1 mod q， </span><br><span class="line">则（B^(q-1)）^(p-1)K = 1^(p-1)K mod q = 1 mod q, </span><br><span class="line">即B^k(p-1)(q-1) mod q =1。 </span><br><span class="line">两边同时乘以B，得到 </span><br><span class="line">B^(k(p-1)(q-1)+1) mod q = B </span><br><span class="line">也就是B^(e*d)mod n = B</span><br></pre></td></tr></table></figure>
+<h5 id="RSA算法举例"><a href="#RSA算法举例" class="headerlink" title="RSA算法举例"></a><strong>RSA算法举例</strong></h5><p>公钥体制中,单向函数的构造基于大整数n因数分解的困难 ,因而n的两个因数p与q都应取大素数。为便于理解,我们选取两个较小的素数来说明该体制的实施。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">例：给定两个素数p=13，q=17 </span><br><span class="line">（1）为用户A和B设计公钥和私钥。 </span><br><span class="line">（2）用户A将明文x=3 加密。 </span><br><span class="line">（3）用户A将明文x=3 加密并签名后发给B，B解密并验证签名试把加密通信过程详细写出。 </span><br><span class="line">解：</span><br><span class="line"></span><br><span class="line">（1）计算得n=p*q=221，φ(n)=（p-1）*（q-1）=12*16=192。</span><br><span class="line"></span><br><span class="line">随机选取与φ(n)=192互素的两个数e1=7和e2=13，并建立同余方程</span><br><span class="line"></span><br><span class="line">7x≡1（mod 192）</span><br><span class="line"></span><br><span class="line">13x≡1（mod 192）</span><br><span class="line"></span><br><span class="line">由于7和192；13和192都互素，7x ≡1 ≡ 193 ≡ 385 mod 192，根据消去律得到x = 55即d1=55，同理得到d2 =133.</span><br><span class="line"></span><br><span class="line">将密钥｛7，55｝和｛13.133｝交给A和B两个人。将n，e1，e2公开，d1，d2交给A和B各自秘密保管。φ(n)=192由密钥制作者保管。</span><br><span class="line"></span><br><span class="line">（2）A在公钥簿上查询到B的公钥e2=13，得到加密函数 </span><br><span class="line">E2(x) ≡ x^13 (mod 221),对信息x=3进行加密得到密文y≡ 3^13 (mod 221)</span><br><span class="line"></span><br><span class="line">因为3^2≡9(mod 221);3^4≡9*9≡81(mod 221);3^8≡81*81≡6561≡152(mod 221)</span><br><span class="line"></span><br><span class="line">所以，3^13 ≡ 3^(8+4+1) ≡152*81*3 ≡ 29 (mod 221)</span><br><span class="line"></span><br><span class="line">A将密文29发出给B。</span><br><span class="line"></span><br><span class="line">B使用自己的私钥133进行解密x = D2（y）≡ y^133 ≡ 29^133(mod 221). 用上述方法计算得29^4 ≡ 81 (mod 221); 29^128 ≡ 35 (mod 221);所以，29^133 ≡ 29^(128+4+1) ≡ 35*81*29 ≡ 3 (mod 221)。</span><br><span class="line"></span><br><span class="line">B得到明文3。</span><br><span class="line"></span><br><span class="line">（3）A使用自己的私钥55和解密函数对信息x=3进行签名得y=3^55 mod 221.A在从公钥簿上查询B的公钥为13和B的加密函数，对y进行加密z=y^13 mod 221 = 3^（55*13）mod 221 = 3^153 mod 221.</span><br><span class="line"></span><br><span class="line">计算得z=211。</span><br><span class="line"></span><br><span class="line">B得到密文后，先查到A的公钥7，用7解密密文z=211，得到y。在使用自己的私钥对y进行验证得到信息x=3。</span><br></pre></td></tr></table></figure>
+<h5 id="常见的RSA攻击方法"><a href="#常见的RSA攻击方法" class="headerlink" title="常见的RSA攻击方法"></a>常见的RSA攻击方法</h5><p><strong>共模攻击</strong></p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">PS：https://blog.csdn.net/qq_31481187/article/details/70448108（详细请看）</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">共模攻击，也称同模攻击，英文原名是 Common Modulus Attack 。 </span><br><span class="line">同模攻击利用的大前提就是，RSA体系在生成密钥的过程中使用了相同的模数n。 </span><br><span class="line">假设COMPANY用所有公钥加密了同一条信息M，也就是 </span><br><span class="line">c1 = m^e1%n </span><br><span class="line">c2 = m^e2%n </span><br><span class="line">此时员工A拥有密钥d1他可以通过 </span><br><span class="line">m = c1^d1%n </span><br><span class="line">解密得到消息m </span><br><span class="line">同时员工B拥有密钥d2 </span><br><span class="line">他可以通过 </span><br><span class="line">m = c2^d2%n </span><br><span class="line">解密得到消息m如果，此时有一个攻击者，同时监听了A和B接收到的密文C1,C2，因为模数不变，以及所有公钥都是公开的，那么利用同模攻击，他就可以在不知道d1，d2的情况下解密得到消息m。</span><br></pre></td></tr></table></figure>
+<p>贴出破解脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> sys;</span><br><span class="line">sys.setrecursionlimit(<span class="number">100000</span>);</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">egcd</span><span class="params">(a, b)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> a == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> (b, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        g, y, x = egcd(b % a, a)</span><br><span class="line">        <span class="keyword">return</span> (g, x - (b // a) * y, y)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">modinv</span><span class="params">(a, m)</span>:</span></span><br><span class="line">    g, x, y = egcd(a, m)</span><br><span class="line">    <span class="keyword">if</span> g != <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">'modular inverse does not exist'</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> x % m</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line"></span><br><span class="line">    n= ???</span><br><span class="line">    e1= ???</span><br><span class="line">    e2= ???</span><br><span class="line">    c1= ???</span><br><span class="line">    c2= ???</span><br><span class="line">    s = egcd(e1, e2)</span><br><span class="line">    s1 = s[<span class="number">1</span>]</span><br><span class="line">    s2 = s[<span class="number">2</span>]</span><br><span class="line">    <span class="comment"># 求模反元素</span></span><br><span class="line">    <span class="keyword">if</span> s1&lt;<span class="number">0</span>:</span><br><span class="line">        s1 = - s1</span><br><span class="line">        c1 = modinv(c1, n)</span><br><span class="line">    <span class="keyword">elif</span> s2&lt;<span class="number">0</span>:</span><br><span class="line">        s2 = - s2</span><br><span class="line">        c2 = modinv(c2, n)</span><br><span class="line">    m = (pow(c1,s1,n)*pow(c2,s2,n))%n</span><br><span class="line">    <span class="keyword">print</span> m</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>还有一些RSA的常见攻击方式，本想着直接写下来，但是又想着要是能在介绍这些攻击方式的理论的同时，放上相应的CTF例题会不会更加容易了解，所以就准备另外开一篇有关RSA攻击方式的博文，谢谢观看！</p>
+
+    </article>
+    <!-- license  -->
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/11/06/bwapp-A6/" title= "bwapp——A6(Sensitive Data Exposure)">
+                    <div class="prevTitle">bwapp——A6(Sensitive Data Exposure)</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:2414617455@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/SuperY4Ng" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/wechat.png" />
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title=qq>
+                  
+                  <img class="profile-qr" src="/assets/QQ.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title=rss></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#产生原因"><span class="toc-number">1.</span> <span class="toc-text">产生原因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RSA"><span class="toc-number">2.</span> <span class="toc-text">RSA</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#RSA相关的数论知识"><span class="toc-number">2.1.</span> <span class="toc-text">RSA相关的数论知识</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#RSA算法及证明"><span class="toc-number">2.2.</span> <span class="toc-text">RSA算法及证明</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#RSA算法举例"><span class="toc-number">2.3.</span> <span class="toc-text">RSA算法举例</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#常见的RSA攻击方法"><span class="toc-number">2.4.</span> <span class="toc-text">常见的RSA攻击方法</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 10
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/07</span><a class="archive-post-title" href= "/2018/11/07/公钥密码体制之RSA/" >公钥密码体制之RSA</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/06</span><a class="archive-post-title" href= "/2018/11/06/bwapp-A6/" >bwapp——A6(Sensitive Data Exposure)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span><a class="archive-post-title" href= "/2018/10/16/8086通用指令之通用寄存器/" >8086通用指令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/14</span><a class="archive-post-title" href= "/2018/10/14/护网杯WP/" >护网杯WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/10</span><a class="archive-post-title" href= "/2018/10/10/流密码/" >流密码</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/08</span><a class="archive-post-title" href= "/2018/10/08/bwapp(1)/" >bwapp(1)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href= "/2018/09/16/渗透测试初步学习之信息收集/" >渗透测试初步学习之信息收集</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href= "/2018/09/16/渗透测试初步学习之漏洞发现/" >渗透测试初步学习之漏洞发现和源码泄露</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href= "/2018/09/16/I春秋CTF训练营web题解（一）/" >I春秋CTF训练营web题解（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href= "/2018/09/16/web开发快速入门(一)/" >WEB开发快速入门（一）</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="二进制"><span class="iconfont-archer">&#xe606;</span>二进制</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="bwapp"><span class="iconfont-archer">&#xe606;</span>bwapp</span>
+    
+        <span class="sidebar-tag-name" data-tags="WEB"><span class="iconfont-archer">&#xe606;</span>WEB</span>
+    
+        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="二进制"><span class="iconfont-archer">&#xe60a;</span>二进制</span>
+    
+        <span class="sidebar-category-name" data-categories="密码学"><span class="iconfont-archer">&#xe60a;</span>密码学</span>
+    
+        <span class="sidebar-category-name" data-categories="玩转bwapp"><span class="iconfont-archer">&#xe60a;</span>玩转bwapp</span>
+    
+        <span class="sidebar-category-name" data-categories="Web开发"><span class="iconfont-archer">&#xe60a;</span>Web开发</span>
+    
+        <span class="sidebar-category-name" data-categories="CTF"><span class="iconfont-archer">&#xe60a;</span>CTF</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "John Doe"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
